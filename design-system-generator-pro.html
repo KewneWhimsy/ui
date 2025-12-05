@@ -432,32 +432,49 @@
             initial-value: -45deg;
         }
 
-        .btn-glass-advanced-wrap {
+        /* ========== GLASS ADVANCED V2 (with customization) ========== */
+        @property --glass-angle-1 {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: -75deg;
+        }
+
+        @property --glass-angle-2 {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: -45deg;
+        }
+
+        :root {
+            --glass-reflection-r: 180;
+            --glass-reflection-g: 240;
+            --glass-reflection-b: 230;
+            --glass-reflection-opacity: 0.15;
+            --glass-shadow-blur: 2px;
+        }
+
+        .glass-button-wrap {
             position: relative;
             z-index: 2;
             border-radius: 999vw;
             background: transparent;
             pointer-events: none;
             transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
-            display: inline-block;
         }
 
-        .btn-glass-advanced-shadow {
+        .glass-button-shadow {
             --shadow-cuttoff-fix: 2em;
             position: absolute;
             width: calc(100% + var(--shadow-cuttoff-fix));
             height: calc(100% + var(--shadow-cuttoff-fix));
             top: calc(0% - var(--shadow-cuttoff-fix) / 2);
             left: calc(0% - var(--shadow-cuttoff-fix) / 2);
-            filter: blur(clamp(2px, 0.125em, 12px));
-            -webkit-filter: blur(clamp(2px, 0.125em, 12px));
-            -moz-filter: blur(clamp(2px, 0.125em, 12px));
-            -ms-filter: blur(clamp(2px, 0.125em, 12px));
+            filter: blur(var(--glass-shadow-blur));
             overflow: visible;
             pointer-events: none;
         }
 
-        .btn-glass-advanced-shadow::after {
+        .glass-button-shadow::after {
             content: "";
             position: absolute;
             z-index: 0;
@@ -471,26 +488,22 @@
             padding: 0.125em;
             box-sizing: border-box;
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             mask-composite: exclude;
+            -webkit-mask-composite: xor;
             transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
             overflow: visible;
             opacity: 1;
         }
 
-        .btn-glass-advanced {
+        .glass-button {
             --border-width: clamp(1px, 0.0625em, 4px);
             all: unset;
             cursor: pointer;
             position: relative;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
             pointer-events: auto;
             z-index: 3;
-            background: linear-gradient(
-                -75deg,
-                rgba(255, 255, 255, 0.05),
-                rgba(255, 255, 255, 0.2),
-                rgba(255, 255, 255, 0.05)
-            );
+            background: linear-gradient(-75deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
             border-radius: 999vw;
             box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
                 inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
@@ -499,17 +512,13 @@
                 0 0 0 0 rgba(255, 255, 255, 1);
             backdrop-filter: blur(clamp(1px, 0.125em, 4px));
             -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
-            -moz-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
-            -ms-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
             transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .btn-glass-advanced:hover {
+        .glass-button:hover {
             transform: scale(0.975);
             backdrop-filter: blur(0.01em);
             -webkit-backdrop-filter: blur(0.01em);
-            -moz-backdrop-filter: blur(0.01em);
-            -ms-backdrop-filter: blur(0.01em);
             box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
                 inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
                 0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25),
@@ -517,31 +526,27 @@
                 0 0 0 0 rgba(255, 255, 255, 1);
         }
 
-        .btn-glass-advanced span {
+        .glass-button span {
             position: relative;
             display: block;
             user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             font-family: "Inter", sans-serif;
             letter-spacing: -0.05em;
             font-weight: 500;
             font-size: 1em;
             color: rgba(50, 50, 50, 1);
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-shadow: 0em 0.25em 0.05em rgba(0, 0, 0, 0.1);
+            text-shadow: 0 0.25em 0.05em rgba(0, 0, 0, 0.1);
             transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
             padding-inline: 1.5em;
             padding-block: 0.875em;
         }
 
-        .btn-glass-advanced:hover span {
+        .glass-button:hover span {
             text-shadow: 0.025em 0.025em 0.025em rgba(0, 0, 0, 0.12);
         }
 
-        .btn-glass-advanced span::after {
+        .glass-button span::after {
             content: "";
             display: block;
             position: absolute;
@@ -552,40 +557,37 @@
             left: calc(0% + var(--border-width) / 2);
             box-sizing: border-box;
             border-radius: 999vw;
-            overflow: clip;
-            background: linear-gradient(
-                var(--angle-2),
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.5) 40% 50%,
-                rgba(255, 255, 255, 0) 55%
-            );
+            overflow: hidden;
+            background: linear-gradient(var(--glass-angle-2), rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 40% 50%, rgba(255, 255, 255, 0) 55%);
             z-index: 3;
             mix-blend-mode: screen;
             pointer-events: none;
             background-size: 200% 200%;
             background-position: 0% 50%;
             background-repeat: no-repeat;
-            transition: background-position calc(400ms * 1.25) cubic-bezier(0.25, 1, 0.5, 1),
-                --angle-2 calc(400ms * 1.25) cubic-bezier(0.25, 1, 0.5, 1);
+            transition: background-position 500ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-2 500ms cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .btn-glass-advanced:hover span::after {
+        .glass-button:hover span::after {
             background-position: 25% 50%;
         }
 
-        .btn-glass-advanced:active span::after {
+        .glass-button:active span::after {
             background-position: 50% 15%;
-            --angle-2: -15deg;
+            --glass-angle-2: -15deg;
         }
 
-        @media (hover: none) and (pointer: coarse) {
-            .btn-glass-advanced span::after,
-            .btn-glass-advanced:active span::after {
-                --angle-2: -45deg;
-            }
+        .glass-button::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(var(--glass-reflection-r), var(--glass-reflection-g), var(--glass-reflection-b), var(--glass-reflection-opacity)), transparent);
+            pointer-events: none;
+            mix-blend-mode: overlay;
         }
 
-        .btn-glass-advanced::after {
+        .glass-button::after {
             content: "";
             position: absolute;
             z-index: 1;
@@ -597,79 +599,22 @@
             left: calc(0% - var(--border-width) / 2);
             padding: var(--border-width);
             box-sizing: border-box;
-            background: conic-gradient(
-                    from var(--angle-1) at 50% 50%,
-                    rgba(0, 0, 0, 0.5),
-                    rgba(0, 0, 0, 0) 5% 40%,
-                    rgba(0, 0, 0, 0.5) 50%,
-                    rgba(0, 0, 0, 0) 60% 95%,
-                    rgba(0, 0, 0, 0.5)
-                ),
+            background: conic-gradient(from var(--glass-angle-1) at 50% 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, 0.5)),
                 linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             mask-composite: exclude;
-            transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1),
-                --angle-1 500ms ease;
-            box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+            -webkit-mask-composite: xor;
+            transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-1 500ms ease;
+            box-shadow: inset 0 0 0 calc(var(--border-width)/2) rgba(255, 255, 255, 0.5);
         }
 
-        .btn-glass-advanced:hover::after {
-            --angle-1: -125deg;
+        .glass-button:hover::after {
+            --glass-angle-1: -125deg;
         }
 
-        .btn-glass-advanced:active::after {
-            --angle-1: -75deg;
-        }
-
-        @media (hover: none) and (pointer: coarse) {
-            .btn-glass-advanced::after,
-            .btn-glass-advanced:hover::after,
-            .btn-glass-advanced:active::after {
-                --angle-1: -75deg;
-            }
-        }
-
-        .btn-glass-advanced-wrap:has(.btn-glass-advanced:hover) .btn-glass-advanced-shadow {
-            filter: blur(clamp(2px, 0.0625em, 6px));
-            -webkit-filter: blur(clamp(2px, 0.0625em, 6px));
-            -moz-filter: blur(clamp(2px, 0.0625em, 6px));
-            -ms-filter: blur(clamp(2px, 0.0625em, 6px));
-            transition: filter 400ms cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .btn-glass-advanced-wrap:has(.btn-glass-advanced:hover) .btn-glass-advanced-shadow::after {
-            top: calc(var(--shadow-cuttoff-fix) - 0.875em);
-            opacity: 1;
-        }
-
-        .btn-glass-advanced-wrap:has(.btn-glass-advanced:active) {
-            transform: rotate3d(1, 0, 0, 25deg);
-        }
-
-        .btn-glass-advanced-wrap:has(.btn-glass-advanced:active) .btn-glass-advanced {
-            box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
-                inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
-                0 0.125em 0.125em -0.125em rgba(0, 0, 0, 0.2),
-                0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2),
-                0 0.225em 0.05em 0 rgba(0, 0, 0, 0.05),
-                0 0.25em 0 0 rgba(255, 255, 255, 0.75),
-                inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-glass-advanced-wrap:has(.btn-glass-advanced:active) .btn-glass-advanced-shadow {
-            filter: blur(clamp(2px, 0.125em, 12px));
-            -webkit-filter: blur(clamp(2px, 0.125em, 12px));
-            -moz-filter: blur(clamp(2px, 0.125em, 12px));
-            -ms-filter: blur(clamp(2px, 0.125em, 12px));
-        }
-
-        .btn-glass-advanced-wrap:has(.btn-glass-advanced:active) .btn-glass-advanced-shadow::after {
-            top: calc(var(--shadow-cuttoff-fix) - 0.5em);
-            opacity: 0.75;
-        }
-
-        .btn-glass-advanced-wrap:has(.btn-glass-advanced:active) span {
-            text-shadow: 0.025em 0.25em 0.05em rgba(0, 0, 0, 0.12);
+        .glass-button:active::after {
+            --glass-angle-1: -75deg;
         }
 
         /* ========== NEUEMORPHISM BUTTON ========== */
@@ -839,7 +784,14 @@
             border-radius: 2rem;
         }
 
-        
+        .dock:hover {
+            padding: 0.8rem;
+            border-radius: 2.5rem;
+        }
+
+        .dock:hover>div {
+            border-radius: 2.5rem;
+        }
 
         .dock-item {
             width: 60px;
@@ -1006,6 +958,35 @@
                         </div>
                     </div>
 
+                    <!-- Contrôles Glass Button -->
+                    <div id="glass-controls" style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div class="control-group">
+                            <label for="glass-reflection-color">Reflection Color</label>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <input type="color" id="glass-reflection-color" value="#B4F0E6"
+                                    style="width: 50px; height: 32px; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;">
+                                <input type="text" id="glass-reflection-color-text" value="#B4F0E6"
+                                    style="flex: 1; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 0.875rem; font-family: monospace;">
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="glass-reflection-opacity">
+                                Reflection Opacity: <span id="glass-reflection-opacity-value">0.15</span>
+                            </label>
+                            <input type="range" id="glass-reflection-opacity" min="0" max="1" step="0.01" value="0.15"
+                                style="width: 100%;">
+                        </div>
+
+                        <div class="control-group">
+                            <label for="glass-shadow-blur">
+                                Shadow Blur: <span id="glass-shadow-blur-value">2px</span>
+                            </label>
+                            <input type="range" id="glass-shadow-blur" min="2" max="12" step="0.5" value="2"
+                                style="width: 100%;">
+                        </div>
+                    </div>
+
                     <div class="control-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="effect-glossy" checked>
@@ -1060,11 +1041,11 @@
                             <button class="btn btn-glossy">Glossy Effect</button>
                         </div>
                         <div class="preview-grid" style="margin-top: 1rem;" id="glass-advanced-basic">
-                            <div class="btn-glass-advanced-wrap">
-                                <button class="btn-glass-advanced">
+                            <div class="glass-button-wrap">
+                                <button class="glass-button">
                                     <span>Glass Advanced</span>
                                 </button>
-                                <div class="btn-glass-advanced-shadow"></div>
+                                <div class="glass-button-shadow"></div>
                             </div>
                         </div>
                         <div class="preview-grid" style="margin-top: 1rem;" id="neuemorph-basic">
@@ -1106,11 +1087,11 @@
                                 <h4 style="color: var(--text);">Card Glass</h4>
                                 <p style="color: var(--text-light);">Effet glassmorphism sur fond coloré.</p>
                             </div>
-                            <div class="btn-glass-advanced-wrap">
-                                <button class="btn-glass-advanced">
+                            <div class="glass-button-wrap">
+                                <button class="glass-button">
                                     <span>Glass Advanced</span>
                                 </button>
-                                <div class="btn-glass-advanced-shadow"></div>
+                                <div class="glass-button-shadow"></div>
                             </div>
                         </div>
                     </div>
@@ -1264,6 +1245,11 @@
                     glossy: document.getElementById('effect-glossy').checked,
                     neuemorph: document.getElementById('effect-neuemorph').checked,
                     liquidglass: document.getElementById('effect-liquidglass').checked,
+                },
+                glassButton: {
+                    reflectionColor: document.getElementById('glass-reflection-color').value,
+                    reflectionOpacity: document.getElementById('glass-reflection-opacity').value,
+                    shadowBlur: document.getElementById('glass-shadow-blur').value,
                 }
             };
             localStorage.setItem('design-system-config-pro', JSON.stringify(config));
@@ -1337,12 +1323,71 @@
         setupRadiusInput('radius-md', 'radius-md-value', '--radius-md', 'radius-md-display');
         setupRadiusInput('radius-lg', 'radius-lg-value', '--radius-lg', 'radius-lg-display');
 
+        // Glass Button Customization
+        function hexToRgb(hex) {
+            hex = hex.replace('#', '');
+            if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+            const bigint = parseInt(hex, 16);
+            return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+        }
+
+        function setupGlassReflectionColor() {
+            const colorInput = document.getElementById('glass-reflection-color');
+            const textInput = document.getElementById('glass-reflection-color-text');
+
+            function updateReflectionColor(value) {
+                const rgb = hexToRgb(value);
+                document.documentElement.style.setProperty('--glass-reflection-r', rgb.r);
+                document.documentElement.style.setProperty('--glass-reflection-g', rgb.g);
+                document.documentElement.style.setProperty('--glass-reflection-b', rgb.b);
+                saveToLocalStorage();
+            }
+
+            colorInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+                textInput.value = value;
+                updateReflectionColor(value);
+            });
+
+            textInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+                if (/^#[0-9A-F]{6}$/i.test(value)) {
+                    colorInput.value = value;
+                    updateReflectionColor(value);
+                }
+            });
+        }
+
+        setupGlassReflectionColor();
+
+        // Glass Reflection Opacity
+        const glassOpacityInput = document.getElementById('glass-reflection-opacity');
+        const glassOpacityValue = document.getElementById('glass-reflection-opacity-value');
+        glassOpacityInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            glassOpacityValue.textContent = value;
+            document.documentElement.style.setProperty('--glass-reflection-opacity', value);
+            saveToLocalStorage();
+        });
+
+        // Glass Shadow Blur
+        const glassShadowBlurInput = document.getElementById('glass-shadow-blur');
+        const glassShadowBlurValue = document.getElementById('glass-shadow-blur-value');
+        glassShadowBlurInput.addEventListener('input', (e) => {
+            const value = e.target.value + 'px';
+            glassShadowBlurValue.textContent = value;
+            document.documentElement.style.setProperty('--glass-shadow-blur', value);
+            saveToLocalStorage();
+        });
+
         // Effets
         document.getElementById('effect-glass').addEventListener('change', (e) => {
             const glassSection = document.getElementById('glass-section');
             const glassAdvancedBasic = document.getElementById('glass-advanced-basic');
+            const glassControls = document.getElementById('glass-controls');
             glassSection.style.display = e.target.checked ? '' : 'none';
             glassAdvancedBasic.style.display = e.target.checked ? '' : 'none';
+            glassControls.style.display = e.target.checked ? '' : 'none';
             saveToLocalStorage();
         });
 
@@ -1398,6 +1443,11 @@
                     glossy: true,
                     neuemorph: true,
                     liquidglass: true,
+                },
+                glassButton: {
+                    reflectionColor: '#B4F0E6',
+                    reflectionOpacity: '0.15',
+                    shadowBlur: '2',
                 }
             };
 
@@ -1456,6 +1506,24 @@
             const liquidglassSection = document.getElementById('liquidglass-section');
             liquidglassSection.style.display = defaults.effects.liquidglass ? '' : 'none';
 
+            const glassControls = document.getElementById('glass-controls');
+            glassControls.style.display = defaults.effects.glass ? '' : 'none';
+
+            // Apply glass button defaults
+            document.getElementById('glass-reflection-color').value = defaults.glassButton.reflectionColor;
+            document.getElementById('glass-reflection-color-text').value = defaults.glassButton.reflectionColor;
+            document.getElementById('glass-reflection-opacity').value = defaults.glassButton.reflectionOpacity;
+            document.getElementById('glass-reflection-opacity-value').textContent = defaults.glassButton.reflectionOpacity;
+            document.getElementById('glass-shadow-blur').value = defaults.glassButton.shadowBlur;
+            document.getElementById('glass-shadow-blur-value').textContent = defaults.glassButton.shadowBlur + 'px';
+
+            const rgb = hexToRgb(defaults.glassButton.reflectionColor);
+            document.documentElement.style.setProperty('--glass-reflection-r', rgb.r);
+            document.documentElement.style.setProperty('--glass-reflection-g', rgb.g);
+            document.documentElement.style.setProperty('--glass-reflection-b', rgb.b);
+            document.documentElement.style.setProperty('--glass-reflection-opacity', defaults.glassButton.reflectionOpacity);
+            document.documentElement.style.setProperty('--glass-shadow-blur', defaults.glassButton.shadowBlur + 'px');
+
             saveToLocalStorage();
         });
 
@@ -1479,6 +1547,12 @@
             const glossyEnabled = document.getElementById('effect-glossy').checked;
             const neuemorphEnabled = document.getElementById('effect-neuemorph').checked;
             const liquidglassEnabled = document.getElementById('effect-liquidglass').checked;
+
+            // Glass Button variables
+            const glassReflectionColor = document.getElementById('glass-reflection-color').value;
+            const glassReflectionOpacity = document.getElementById('glass-reflection-opacity').value;
+            const glassShadowBlur = document.getElementById('glass-shadow-blur').value;
+            const glassRgb = hexToRgb(glassReflectionColor);
 
             const cssContent = `/* Design System - Généré le ${new Date().toLocaleDateString('fr-FR')} */
 
@@ -1571,45 +1645,49 @@ ${glassEnabled ? `
     box-shadow: var(--shadow-md);
 }
 
-/* Glass Advanced - Premium Button with animations */
-@property --angle-1 {
+/* Glass Advanced V2 - Premium Button with customizable reflection */
+@property --glass-angle-1 {
     syntax: "<angle>";
     inherits: false;
     initial-value: -75deg;
 }
 
-@property --angle-2 {
+@property --glass-angle-2 {
     syntax: "<angle>";
     inherits: false;
     initial-value: -45deg;
 }
 
-.btn-glass-advanced-wrap {
+:root {
+    --glass-reflection-r: ${glassRgb.r};
+    --glass-reflection-g: ${glassRgb.g};
+    --glass-reflection-b: ${glassRgb.b};
+    --glass-reflection-opacity: ${glassReflectionOpacity};
+    --glass-shadow-blur: ${glassShadowBlur}px;
+}
+
+.glass-button-wrap {
     position: relative;
     z-index: 2;
     border-radius: 999vw;
     background: transparent;
     pointer-events: none;
     transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
-    display: inline-block;
 }
 
-.btn-glass-advanced-shadow {
+.glass-button-shadow {
     --shadow-cuttoff-fix: 2em;
     position: absolute;
     width: calc(100% + var(--shadow-cuttoff-fix));
     height: calc(100% + var(--shadow-cuttoff-fix));
     top: calc(0% - var(--shadow-cuttoff-fix) / 2);
     left: calc(0% - var(--shadow-cuttoff-fix) / 2);
-    filter: blur(clamp(2px, 0.125em, 12px));
-    -webkit-filter: blur(clamp(2px, 0.125em, 12px));
-    -moz-filter: blur(clamp(2px, 0.125em, 12px));
-    -ms-filter: blur(clamp(2px, 0.125em, 12px));
+    filter: blur(var(--glass-shadow-blur));
     overflow: visible;
     pointer-events: none;
 }
 
-.btn-glass-advanced-shadow::after {
+.glass-button-shadow::after {
     content: "";
     position: absolute;
     z-index: 0;
@@ -1623,26 +1701,22 @@ ${glassEnabled ? `
     padding: 0.125em;
     box-sizing: border-box;
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
+    -webkit-mask-composite: xor;
     transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
     overflow: visible;
     opacity: 1;
 }
 
-.btn-glass-advanced {
+.glass-button {
     --border-width: clamp(1px, 0.0625em, 4px);
     all: unset;
     cursor: pointer;
     position: relative;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     pointer-events: auto;
     z-index: 3;
-    background: linear-gradient(
-        -75deg,
-        rgba(255, 255, 255, 0.05),
-        rgba(255, 255, 255, 0.2),
-        rgba(255, 255, 255, 0.05)
-    );
+    background: linear-gradient(-75deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
     border-radius: 999vw;
     box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
         inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
@@ -1651,17 +1725,13 @@ ${glassEnabled ? `
         0 0 0 0 rgba(255, 255, 255, 1);
     backdrop-filter: blur(clamp(1px, 0.125em, 4px));
     -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
-    -moz-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
-    -ms-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
     transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.btn-glass-advanced:hover {
+.glass-button:hover {
     transform: scale(0.975);
     backdrop-filter: blur(0.01em);
     -webkit-backdrop-filter: blur(0.01em);
-    -moz-backdrop-filter: blur(0.01em);
-    -ms-backdrop-filter: blur(0.01em);
     box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
         inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
         0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25),
@@ -1669,31 +1739,27 @@ ${glassEnabled ? `
         0 0 0 0 rgba(255, 255, 255, 1);
 }
 
-.btn-glass-advanced span {
+.glass-button span {
     position: relative;
     display: block;
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     font-family: "Inter", sans-serif;
     letter-spacing: -0.05em;
     font-weight: 500;
     font-size: 1em;
     color: rgba(50, 50, 50, 1);
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-shadow: 0em 0.25em 0.05em rgba(0, 0, 0, 0.1);
+    text-shadow: 0 0.25em 0.05em rgba(0, 0, 0, 0.1);
     transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
     padding-inline: 1.5em;
     padding-block: 0.875em;
 }
 
-.btn-glass-advanced:hover span {
+.glass-button:hover span {
     text-shadow: 0.025em 0.025em 0.025em rgba(0, 0, 0, 0.12);
 }
 
-.btn-glass-advanced span::after {
+.glass-button span::after {
     content: "";
     display: block;
     position: absolute;
@@ -1704,40 +1770,37 @@ ${glassEnabled ? `
     left: calc(0% + var(--border-width) / 2);
     box-sizing: border-box;
     border-radius: 999vw;
-    overflow: clip;
-    background: linear-gradient(
-        var(--angle-2),
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.5) 40% 50%,
-        rgba(255, 255, 255, 0) 55%
-    );
+    overflow: hidden;
+    background: linear-gradient(var(--glass-angle-2), rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 40% 50%, rgba(255, 255, 255, 0) 55%);
     z-index: 3;
     mix-blend-mode: screen;
     pointer-events: none;
     background-size: 200% 200%;
     background-position: 0% 50%;
     background-repeat: no-repeat;
-    transition: background-position calc(400ms * 1.25) cubic-bezier(0.25, 1, 0.5, 1),
-        --angle-2 calc(400ms * 1.25) cubic-bezier(0.25, 1, 0.5, 1);
+    transition: background-position 500ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-2 500ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.btn-glass-advanced:hover span::after {
+.glass-button:hover span::after {
     background-position: 25% 50%;
 }
 
-.btn-glass-advanced:active span::after {
+.glass-button:active span::after {
     background-position: 50% 15%;
-    --angle-2: -15deg;
+    --glass-angle-2: -15deg;
 }
 
-@media (hover: none) and (pointer: coarse) {
-    .btn-glass-advanced span::after,
-    .btn-glass-advanced:active span::after {
-        --angle-2: -45deg;
-    }
+.glass-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(var(--glass-reflection-r), var(--glass-reflection-g), var(--glass-reflection-b), var(--glass-reflection-opacity)), transparent);
+    pointer-events: none;
+    mix-blend-mode: overlay;
 }
 
-.btn-glass-advanced::after {
+.glass-button::after {
     content: "";
     position: absolute;
     z-index: 1;
@@ -1749,87 +1812,30 @@ ${glassEnabled ? `
     left: calc(0% - var(--border-width) / 2);
     padding: var(--border-width);
     box-sizing: border-box;
-    background: conic-gradient(
-            from var(--angle-1) at 50% 50%,
-            rgba(0, 0, 0, 0.5),
-            rgba(0, 0, 0, 0) 5% 40%,
-            rgba(0, 0, 0, 0.5) 50%,
-            rgba(0, 0, 0, 0) 60% 95%,
-            rgba(0, 0, 0, 0.5)
-        ),
+    background: conic-gradient(from var(--glass-angle-1) at 50% 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, 0.5)),
         linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
-    transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1),
-        --angle-1 500ms ease;
-    box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+    -webkit-mask-composite: xor;
+    transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-1 500ms ease;
+    box-shadow: inset 0 0 0 calc(var(--border-width)/2) rgba(255, 255, 255, 0.5);
 }
 
-.btn-glass-advanced:hover::after {
-    --angle-1: -125deg;
+.glass-button:hover::after {
+    --glass-angle-1: -125deg;
 }
 
-.btn-glass-advanced:active::after {
-    --angle-1: -75deg;
+.glass-button:active::after {
+    --glass-angle-1: -75deg;
 }
 
-@media (hover: none) and (pointer: coarse) {
-    .btn-glass-advanced::after,
-    .btn-glass-advanced:hover::after,
-    .btn-glass-advanced:active::after {
-        --angle-1: -75deg;
-    }
-}
-
-.btn-glass-advanced-wrap:has(.btn-glass-advanced:hover) .btn-glass-advanced-shadow {
-    filter: blur(clamp(2px, 0.0625em, 6px));
-    -webkit-filter: blur(clamp(2px, 0.0625em, 6px));
-    -moz-filter: blur(clamp(2px, 0.0625em, 6px));
-    -ms-filter: blur(clamp(2px, 0.0625em, 6px));
-    transition: filter 400ms cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.btn-glass-advanced-wrap:has(.btn-glass-advanced:hover) .btn-glass-advanced-shadow::after {
-    top: calc(var(--shadow-cuttoff-fix) - 0.875em);
-    opacity: 1;
-}
-
-.btn-glass-advanced-wrap:has(.btn-glass-advanced:active) {
-    transform: rotate3d(1, 0, 0, 25deg);
-}
-
-.btn-glass-advanced-wrap:has(.btn-glass-advanced:active) .btn-glass-advanced {
-    box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
-        inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
-        0 0.125em 0.125em -0.125em rgba(0, 0, 0, 0.2),
-        0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2),
-        0 0.225em 0.05em 0 rgba(0, 0, 0, 0.05),
-        0 0.25em 0 0 rgba(255, 255, 255, 0.75),
-        inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.15);
-}
-
-.btn-glass-advanced-wrap:has(.btn-glass-advanced:active) .btn-glass-advanced-shadow {
-    filter: blur(clamp(2px, 0.125em, 12px));
-    -webkit-filter: blur(clamp(2px, 0.125em, 12px));
-    -moz-filter: blur(clamp(2px, 0.125em, 12px));
-    -ms-filter: blur(clamp(2px, 0.125em, 12px));
-}
-
-.btn-glass-advanced-wrap:has(.btn-glass-advanced:active) .btn-glass-advanced-shadow::after {
-    top: calc(var(--shadow-cuttoff-fix) - 0.5em);
-    opacity: 0.75;
-}
-
-.btn-glass-advanced-wrap:has(.btn-glass-advanced:active) span {
-    text-shadow: 0.025em 0.25em 0.05em rgba(0, 0, 0, 0.12);
-}
-
-/* HTML pour btn-glass-advanced:
-<div class="btn-glass-advanced-wrap">
-    <button class="btn-glass-advanced">
-        <span>Votre texte</span>
+/* HTML Usage:
+<div class="glass-button-wrap">
+    <button class="glass-button">
+        <span>Your Text</span>
     </button>
-    <div class="btn-glass-advanced-shadow"></div>
+    <div class="glass-button-shadow"></div>
 </div>
 */
 ` : ''}${glossyEnabled ? `
@@ -2288,6 +2294,32 @@ Then use the structure:
                 const liquidglassSection = document.getElementById('liquidglass-section');
                 if (liquidglassSection) {
                     liquidglassSection.style.display = (config.effects.liquidglass !== false) ? '' : 'none';
+                }
+
+                const glassControls = document.getElementById('glass-controls');
+                if (glassControls) {
+                    glassControls.style.display = config.effects.glass ? '' : 'none';
+                }
+
+                // Glass Button customization
+                if (config.glassButton) {
+                    const reflectionColor = config.glassButton.reflectionColor || '#B4F0E6';
+                    const reflectionOpacity = config.glassButton.reflectionOpacity || '0.15';
+                    const shadowBlur = config.glassButton.shadowBlur || '2';
+
+                    document.getElementById('glass-reflection-color').value = reflectionColor;
+                    document.getElementById('glass-reflection-color-text').value = reflectionColor;
+                    document.getElementById('glass-reflection-opacity').value = reflectionOpacity;
+                    document.getElementById('glass-reflection-opacity-value').textContent = reflectionOpacity;
+                    document.getElementById('glass-shadow-blur').value = shadowBlur;
+                    document.getElementById('glass-shadow-blur-value').textContent = shadowBlur + 'px';
+
+                    const rgb = hexToRgb(reflectionColor);
+                    document.documentElement.style.setProperty('--glass-reflection-r', rgb.r);
+                    document.documentElement.style.setProperty('--glass-reflection-g', rgb.g);
+                    document.documentElement.style.setProperty('--glass-reflection-b', rgb.b);
+                    document.documentElement.style.setProperty('--glass-reflection-opacity', reflectionOpacity);
+                    document.documentElement.style.setProperty('--glass-shadow-blur', shadowBlur + 'px');
                 }
             }
         }
