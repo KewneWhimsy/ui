@@ -104,7 +104,7 @@
         .panel {
             background: var(--surface);
             padding: 1.5rem;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-md);
             box-shadow: var(--shadow-md);
             margin-bottom: 1.5rem;
         }
@@ -775,22 +775,13 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            border-radius: 2rem;
+            border-radius: var(--radius-lg);
             padding: 0.6rem;
         }
 
         .dock,
         .dock>div {
-            border-radius: 2rem;
-        }
-
-        .dock:hover {
-            padding: 0.8rem;
-            border-radius: 2.5rem;
-        }
-
-        .dock:hover>div {
-            border-radius: 2.5rem;
+            border-radius: var(--radius-lg);
         }
 
         .dock-item {
@@ -935,17 +926,17 @@
 
                     <div class="control-group">
                         <label>Small <span class="range-value" id="radius-sm-value">0.25rem</span></label>
-                        <input type="range" id="radius-sm" min="0" max="12" value="4" step="1">
+                        <input type="range" id="radius-sm" min="12" max="24" value="4" step="1">
                     </div>
 
                     <div class="control-group">
                         <label>Medium <span class="range-value" id="radius-md-value">0.5rem</span></label>
-                        <input type="range" id="radius-md" min="0" max="24" value="8" step="1">
+                        <input type="range" id="radius-md" min="24" max="32" value="8" step="1">
                     </div>
 
                     <div class="control-group">
                         <label>Large <span class="range-value" id="radius-lg-value">0.75rem</span></label>
-                        <input type="range" id="radius-lg" min="0" max="32" value="12" step="1">
+                        <input type="range" id="radius-lg" min="32" max="48" value="12" step="1">
                     </div>
 
                     <!-- Effets -->
@@ -1168,7 +1159,7 @@
                         <p style="color: var(--text-color); opacity: 0.7; font-size: 0.9rem; margin: 0 0 1rem 0;">
                             Effet macOS dock avec distorsion SVG
                         </p>
-                        <div style="position: relative; display: flex; justify-content: center; padding: 4rem 2rem; border-radius: var(--radius-lg); overflow: hidden;">
+                        <div style="position: relative; display: flex; justify-content: center; padding: 4rem 2rem; border-radius: var(--radius-sm); overflow: hidden;">
                             <!-- Gradient animé en fond -->
                             <div style="
                                 position: absolute;
