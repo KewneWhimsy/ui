@@ -66,10 +66,19 @@
         line-height: 1.6;
         color: var(--text);
         background: var(--background);
+        user-select: none;
       }
+
       main {
         font-size: var(--text-base);
+        --text-xs: calc(var(--text-base) * 0.75);
+        --text-sm: calc(var(--text-base) * 0.875);
+        --text-lg: calc(var(--text-base) * 1.125);
+        --text-xl: calc(var(--text-base) * 1.25);
+        --text-2xl: calc(var(--text-base) * 1.5);
+        --text-3xl: calc(var(--text-base) * 2);
       }
+
       .container {
         max-width: 1600px;
         margin: 0 auto;
@@ -897,10 +906,7 @@
   <body>
     <div class="container">
       <header>
-        <h1>🎨 Générateur de Design System Pro</h1>
-        <p class="subtitle">
-          Configuration complète pour Tailwind + CSS Custom
-        </p>
+        <h1>🎨 Générateur de Design System CSS</h1>
       </header>
 
       <div class="layout">
@@ -1002,8 +1008,8 @@
               <input
                 type="range"
                 id="text-base-size"
-                min="14"
-                max="18"
+                min="12"
+                max="50"
                 value="16"
                 step="1"
               />
@@ -2642,32 +2648,6 @@ ${
     color: var(--error);
 }
 
-/* === UTILISATION AVEC TAILWIND === */
-/*
-Tailwind détectera automatiquement tes custom properties.
-Tu peux les utiliser comme ceci :
-
-HTML : <button class="btn btn-primary">Mon bouton</button>
-Tailwind : bg-[var(--primary)] text-[var(--text)] rounded-[var(--radius-md)]
-
-Ou configure tailwind.config.js pour utiliser tes variables :
-{
-  theme: {
-    extend: {
-      colors: {
-        primary: 'var(--primary)',
-        secondary: 'var(--secondary)',
-        // etc...
-      },
-      borderRadius: {
-        'custom-sm': 'var(--radius-sm)',
-        'custom-md': 'var(--radius-md)',
-        'custom-lg': 'var(--radius-lg)',
-      }
-    }
-  }
-}
-*/
 ${
   liquidglassEnabled
     ? `
@@ -2804,7 +2784,7 @@ Then use the structure:
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "design-system-pro.css";
+        a.download = "global.css";
         a.click();
         URL.revokeObjectURL(url);
       });
