@@ -698,7 +698,20 @@
       .glass-button:active::after {
         --glass-angle-1: -75deg;
       }
+      /* Shadow Hover Effects */
+.glass-button-wrap:has(.glass-button:hover) .glass-button-shadow {
+  filter: blur(clamp(2px, 0.0625em, 6px));
+}
 
+.glass-button-wrap:has(.glass-button:hover) .glass-button-shadow::after {
+  top: calc(var(--shadow-cuttoff-fix) - 0.875em);
+  opacity: 1;
+}
+
+.glass-button-wrap:has(.glass-button:active) .glass-button-shadow::after {
+  top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+  opacity: 0.75;
+}
       /* ========== NEUEMORPHISM BUTTON ========== */
       .btn-neuemorph {
         all: unset;
@@ -2406,7 +2419,20 @@ ${
 .glass-button:active::after {
     --glass-angle-1: -75deg;
 }
+/* Shadow Hover Effects */
+.glass-button-wrap:has(.glass-button:hover) .glass-button-shadow {
+  filter: blur(clamp(2px, 0.0625em, 6px));
+}
 
+.glass-button-wrap:has(.glass-button:hover) .glass-button-shadow::after {
+  top: calc(var(--shadow-cuttoff-fix) - 0.875em);
+  opacity: 1;
+}
+
+.glass-button-wrap:has(.glass-button:active) .glass-button-shadow::after {
+  top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+  opacity: 0.75;
+}
 /* HTML Usage:
 <div class="glass-button-wrap">
     <button class="glass-button">
