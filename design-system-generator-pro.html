@@ -42,6 +42,10 @@
         --space-lg: 1.5rem;
         --space-xl: 2rem;
 
+        /* Button Size */
+--btn-padding-y: 0.625rem;
+--btn-padding-x: 1.5rem;
+
         /* Border Radius */
         --radius-sm: 0.25rem;
         --radius-md: 0.5rem;
@@ -62,7 +66,9 @@
         color: var(--text);
         background: var(--background);
       }
-
+      main {
+  font-size: var(--text-base);
+    }
       .container {
         max-width: 1600px;
         margin: 0 auto;
@@ -240,7 +246,7 @@
 
       /* Composants */
       .btn {
-        padding: 0.625rem 1.5rem;
+        padding: var(--btn-padding-y) var(--btn-padding-x);
         border: none;
         border-radius: var(--radius-md);
         font-weight: 500;
@@ -298,6 +304,7 @@
           color-mix(in srgb, var(--primary) 75%, black) 100%
         );
         color: white;
+        border-radius: var(--radius-sm);
         box-shadow: 0 4px 15px
             color-mix(in srgb, var(--primary) 40%, transparent),
           inset 0 1px 0 rgba(255, 255, 255, 0.4),
@@ -1001,6 +1008,15 @@
               />
             </div>
 
+<!-- Button Size -->
+<h3>🔘 Button Size</h3>
+
+<div class="control-group">
+  <label>Size Scale
+    <span class="range-value" id="btn-size-value">1x</span>
+  </label>
+  <input type="range" id="btn-size" min="0.7" max="1.5" value="1" step="0.05" />
+</div>
             <!-- Border Radius -->
             <h3>📐 Border Radius</h3>
 
@@ -1552,6 +1568,10 @@
             fontBase: document.getElementById("font-base").value,
             textBaseSize: document.getElementById("text-base-size").value,
           },
+          buttonSize: {
+      scale: document.getElementById("btn-size").value,
+      
+    },
           radius: {
             sm: document.getElementById("radius-sm").value,
             md: document.getElementById("radius-md").value,
@@ -1635,7 +1655,25 @@
         document.documentElement.style.setProperty("--text-base", value);
         saveToLocalStorage();
       });
+      // Button size scale (garde le ratio 10:24:14)
+const btnSizeInput = document.getElementById('btn-size');
+const btnSizeValue = document.getElementById('btn-size-value');
+const basePaddingY = 10;  // 0.625rem
+const basePaddingX = 24;  // 1.5rem
+const baseFontSize = 14;  // 0.875rem
 
+btnSizeInput.addEventListener('input', (e) => {
+  const scale = parseFloat(e.target.value);
+  const paddingY = Math.round(basePaddingY * scale);
+  const paddingX = Math.round(basePaddingX * scale);
+  const fontSize = Math.round(baseFontSize * scale);
+  
+  btnSizeValue.textContent = scale.toFixed(2) + 'x';
+  document.documentElement.style.setProperty('--btn-padding-y', paddingY + 'px');
+  document.documentElement.style.setProperty('--btn-padding-x', paddingX + 'px');
+  document.documentElement.style.setProperty('--btn-font-size', fontSize + 'px');
+  saveToLocalStorage();
+});
       // Border radius
       function setupRadiusInput(id, valueId, cssVar, displayId) {
         const input = document.getElementById(id);
@@ -1828,6 +1866,9 @@
             fontBase: "system-ui, -apple-system, sans-serif",
             textBaseSize: "16",
           },
+          buttonSize: {
+  scale: '1',
+},
           radius: {
             sm: "4",
             md: "8",
@@ -2061,7 +2102,12 @@
     --space-md: 1rem;
     --space-lg: 1.5rem;
     --space-xl: 2rem;
-    
+
+    /* Button Size */
+--btn-padding-y: ${btnPaddingY};
+--btn-padding-x: ${btnPaddingX};
+--btn-font-size: 0.875rem;
+
     /* Border Radius */
     --radius-sm: ${radiusSm};
     --radius-md: ${radiusMd};
@@ -2088,7 +2134,7 @@
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
-    font-size: var(--text-sm);
+    font-size: var(--btn-font-size);
     font-family: var(--font-base);
 }
 
@@ -2774,7 +2820,22 @@ Then use the structure:
             "--text-base",
             config.typography.textBaseSize + "px"
           );
-
+          // Button size
+if (config.buttonSize) {
+  const scale = parseFloat(config.buttonSize.scale);
+  const input = document.getElementById('btn-size');
+  const valueDisplay = document.getElementById('btn-size-value');
+  if (input && valueDisplay) {
+    input.value = scale;
+    valueDisplay.textContent = scale.toFixed(2) + 'x';
+    const paddingY = Math.round(10 * scale);
+    const paddingX = Math.round(24 * scale);
+    const fontSize = Math.round(14 * scale);
+    document.documentElement.style.setProperty('--btn-padding-y', paddingY + 'px');
+    document.documentElement.style.setProperty('--btn-padding-x', paddingX + 'px');
+    document.documentElement.style.setProperty('--btn-font-size', fontSize + 'px');
+  }
+}
           // Radius
           Object.entries(config.radius).forEach(([key, value]) => {
             const input = document.getElementById(`radius-${key}`);
