@@ -13,7 +13,7 @@
 
       :root {
         /* Couleurs */
-        --primary: #10b981;
+        --primary: #45b09b;
         --secondary: #8b5cf6;
         --neutral: #6b7280;
         --background: #f9fafb;
@@ -304,6 +304,14 @@
         border: 1px solid rgba(255, 255, 255, 0.3);
         color: var(--text);
         box-shadow: var(--shadow-md);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .btn-glass:hover {
+       transform: translateY(-1px);
+        box-shadow: 0 4px 12px
+            color-mix(in srgb, var(--primary) 50%, transparent),
+          inset 0 1px 0 rgba(255, 255, 255, 0.4),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.1);
       }
 
       .btn-glossy {
@@ -1241,6 +1249,8 @@
                 id="effects-buttons"
               >
                 <button class="btn btn-glossy">Glossy Effect</button>
+                <button class="btn btn-glass">Glass Simple</button>
+
               </div>
               <div
                 class="preview-grid"
@@ -1876,7 +1886,7 @@
         // Default values
         const defaults = {
           colors: {
-            primary: "#10b981",
+            primary: "#45b09b",
             secondary: "#8b5cf6",
             background: "#f9fafb",
             surface: "#ffffff",
