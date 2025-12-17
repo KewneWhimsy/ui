@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glass Toggle Switch - Optimisé</title>
+    <style>
+        /* Gradient conique animé */
+        @property --toggle-angle {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: -75deg;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --toggle-active-color: #45b09b;
+            --transition-speed: 0.4s;
+            --angle-transition: 0.5s;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        .demo-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .demo-row {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .label {
+            color: white;
+            min-width: 100px;
+        }
+
+        /* Toggle Switch */
+        .glass-toggle-wrap {
+            --toggle-width: 4em;
+            --toggle-height: 2.2em;
+            --thumb-size: 1.8em;
+            --thumb-offset: 0.2em;
+            --border-width: 1.5px;
+            
+            position: relative;
+            font-size: 16px;
+        }
+
+        .glass-toggle-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .glass-toggle {
+            position: relative;
+            display: block;
+            width: var(--toggle-width);
+            height: var(--toggle-height);
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        /* Track background */
+        .glass-toggle-track {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.1));
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 -1px 2px rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-speed) ease;
+            overflow: hidden;
+        }
+
+        /* Track glow actif */
+        .glass-toggle-track::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg,
+                var(--toggle-active-color),
+                color-mix(in srgb, var(--toggle-active-color) 50%, transparent)
+            );
+            opacity: 0;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .glass-toggle-input:checked + .glass-toggle .glass-toggle-track::before {
+            opacity: 1;
+        }
+
+        /* Track border animée avec gradient conique */
+        .glass-toggle-track::after {
+            content: "";
+            position: absolute;
+            inset: calc(var(--border-width) * -1);
+            border-radius: inherit;
+            padding: var(--border-width);
+            background: 
+                conic-gradient(
+                    from var(--toggle-angle) at 50% 50%,
+                    rgba(0, 0, 0, 0.4),
+                    rgba(0, 0, 0, 0) 10% 40%,
+                    rgba(0, 0, 0, 0.4) 50%,
+                    rgba(0, 0, 0, 0) 60% 90%,
+                    rgba(0, 0, 0, 0.4)
+                ),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            transition: --toggle-angle var(--angle-transition) ease;
+        }
+
+        /* Glass thumb */
+        .glass-toggle-thumb {
+            position: absolute;
+            top: var(--thumb-offset);
+            left: var(--thumb-offset);
+            width: var(--thumb-size);
+            height: var(--thumb-size);
+            border-radius: 50%;
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.35),
+                rgba(255, 255, 255, 0.1)
+            );
+            backdrop-filter: blur(2px);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.5),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all var(--transition-speed) ease;
+            z-index: 2;
+        }
+
+        /* Thumb border animée avec gradient conique */
+        .glass-toggle-thumb::before {
+            content: "";
+            position: absolute;
+            inset: calc(var(--border-width) * -1);
+            border-radius: inherit;
+            padding: var(--border-width);
+            background: 
+                conic-gradient(
+                    from var(--toggle-angle) at 50% 50%,
+                    rgba(0, 0, 0, 0.5),
+                    rgba(0, 0, 0, 0) 10% 40%,
+                    rgba(0, 0, 0, 0.5) 50%,
+                    rgba(0, 0, 0, 0) 60% 90%,
+                    rgba(0, 0, 0, 0.5)
+                ),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3));
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            transition: --toggle-angle var(--angle-transition) ease;
+        }
+
+        /* Reflet sur le thumb */
+        .glass-toggle-thumb::after {
+            content: "";
+            position: absolute;
+            top: 10%;
+            left: 12%;
+            width: 35%;
+            height: 25%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%,
+                rgba(255, 255, 255, 1),
+                rgba(255, 255, 255, 0.4) 40%,
+                transparent 70%
+            );
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        /* État activé - changement d'angle + déplacement */
+        .glass-toggle-input:checked + .glass-toggle .glass-toggle-thumb {
+            left: calc(100% - var(--thumb-size) - var(--thumb-offset));
+            --toggle-angle: -125deg;
+            background: linear-gradient(135deg,
+                color-mix(in srgb, var(--toggle-active-color) 40%, rgba(255, 255, 255, 0.2)),
+                color-mix(in srgb, var(--toggle-active-color) 40%, rgba(255, 255, 255, 0.4)),
+                color-mix(in srgb, var(--toggle-active-color) 40%, rgba(255, 255, 255, 0.1))
+            );
+        }
+
+        .glass-toggle-input:checked + .glass-toggle .glass-toggle-track::after {
+            --toggle-angle: -125deg;
+        }
+
+        /* Hover */
+        .glass-toggle:hover .glass-toggle-thumb {
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.6),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.1),
+                0 3px 6px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Active (click) */
+        .glass-toggle:active .glass-toggle-thumb {
+            transform: scale(0.9);
+        }
+
+        /* Focus visible */
+        .glass-toggle-input:focus-visible + .glass-toggle {
+            outline: 2px solid rgba(255, 255, 255, 0.8);
+            outline-offset: 3px;
+        }
+
+        /* Tailles */
+        .glass-toggle-wrap.sm { font-size: 12px; }
+        .glass-toggle-wrap.lg { font-size: 20px; }
+        .glass-toggle-wrap.xl { font-size: 24px; }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h2>Glass Toggle Switch</h2>
+        
+        <div class="demo-row">
+            <span class="label">Small</span>
+            <div class="glass-toggle-wrap sm">
+                <input type="checkbox" id="toggle-sm" class="glass-toggle-input">
+                <label for="toggle-sm" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="demo-row">
+            <span class="label">Default</span>
+            <div class="glass-toggle-wrap">
+                <input type="checkbox" id="toggle-default" class="glass-toggle-input" checked>
+                <label for="toggle-default" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="demo-row">
+            <span class="label">Large</span>
+            <div class="glass-toggle-wrap lg">
+                <input type="checkbox" id="toggle-lg" class="glass-toggle-input">
+                <label for="toggle-lg" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="demo-row">
+            <span class="label">Extra Large</span>
+            <div class="glass-toggle-wrap xl">
+                <input type="checkbox" id="toggle-xl" class="glass-toggle-input" checked>
+                <label for="toggle-xl" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

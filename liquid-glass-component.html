@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Glass Dock</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: system-ui, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+      animation: gradientMove 10s ease infinite;
+      background-size: 200% 200%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    @keyframes gradientMove {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 { font-size: 1.75rem; margin-bottom: 0.5rem; color: #1f2937; }
+    .subtitle { color: #6b7280; margin-bottom: 2rem; font-size: 0.875rem; }
+
+    .demo-area {
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      min-height: 300px;
+    }
+
+    .control-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .control-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #374151;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .actions { display: flex; gap: 1rem; margin-top: 2rem; }
+    
+    .btn-action {
+      flex: 1;
+      padding: 0.875rem;
+      background: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+    }
+
+    /* LIQUID GLASS DOCK */
+    .liquidGlass-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.37),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .liquidGlass-effect {
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1), 
+        rgba(255, 255, 255, 0.05));
+      filter: url(#glass-distortion);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .liquidGlass-tint {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(
+        circle at 50% 0%,
+        rgba(255, 255, 255, 0.15),
+        transparent 70%
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .liquidGlass-shine {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 40%;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.3) 0%, 
+        transparent 100%);
+      border-radius: 1.5rem 1.5rem 50% 50%;
+      filter: blur(10px);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .liquidGlass-text {
+      position: relative;
+      z-index: 10;
+      color: white;
+      font-weight: 600;
+      font-size: 2.5rem;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      gap: 1rem;
+    }
+
+    code {
+      display: block;
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      margin-top: 2rem;
+      white-space: pre-wrap;
+    }
+
+    .info {
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <svg style="position: absolute; width: 0; height: 0;">
+    <defs>
+      <filter id="glass-distortion" x="-50%" y="-50%" width="200%" height="200%">
+        <feTurbulence 
+          type="fractalNoise" 
+          baseFrequency="0.01 0.01" 
+          numOctaves="3" 
+          result="turbulence">
+          <animate 
+            attributeName="baseFrequency" 
+            dur="20s" 
+            values="0.01 0.01;0.015 0.015;0.01 0.01" 
+            repeatCount="indefinite"/>
+        </feTurbulence>
+        
+        <feGaussianBlur in="turbulence" stdDeviation="2" result="blur"/>
+        
+        <feSpecularLighting 
+          in="blur" 
+          surfaceScale="5" 
+          specularConstant="1" 
+          specularExponent="20" 
+          result="specular">
+          <fePointLight x="100" y="100" z="200"/>
+        </feSpecularLighting>
+        
+        <feDisplacementMap 
+          in="SourceGraphic" 
+          in2="turbulence" 
+          scale="10" 
+          xChannelSelector="R" 
+          yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="container">
+    <h1>💧 Liquid Glass Dock</h1>
+    <p class="subtitle">Effet macOS-like avec distorsion SVG animée</p>
+
+    <div class="demo-area">
+      <div class="liquidGlass-wrapper">
+        <div class="liquidGlass-effect"></div>
+        <div class="liquidGlass-tint"></div>
+        <div class="liquidGlass-shine"></div>
+        <div class="liquidGlass-text" id="icons-display">
+          <span>🎨</span>
+          <span>💻</span>
+          <span>🎵</span>
+          <span>📁</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Icônes (séparées par des espaces)</label>
+      <input type="text" id="icons-input" value="🎨 💻 🎵 📁" placeholder="Ex: 🎨 💻 🎵 📁">
+    </div>
+
+    <div class="info">
+      💡 <strong>Astuce :</strong> Le filtre SVG crée une distorsion liquide animée. Le blur et la turbulence s'animent automatiquement via CSS animations.
+    </div>
+
+    <div class="actions">
+      <button class="btn-action" id="copy-css">📋 Copier le CSS</button>
+      <button class="btn-action" id="copy-html">📄 Copier le HTML + SVG</button>
+    </div>
+
+    <code id="html-code">&lt;svg style="position: absolute; width: 0; height: 0;"&gt;
+  &lt;defs&gt;
+    &lt;filter id="glass-distortion"&gt;
+      &lt;!-- Voir le code SVG complet ci-dessus --&gt;
+    &lt;/filter&gt;
+  &lt;/defs&gt;
+&lt;/svg&gt;
+
+&lt;div class="liquidGlass-wrapper"&gt;
+  &lt;div class="liquidGlass-effect"&gt;&lt;/div&gt;
+  &lt;div class="liquidGlass-tint"&gt;&lt;/div&gt;
+  &lt;div class="liquidGlass-shine"&gt;&lt;/div&gt;
+  &lt;div class="liquidGlass-text"&gt;
+    &lt;span&gt;🎨&lt;/span&gt;
+    &lt;span&gt;💻&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code>
+  </div>
+
+  <script>
+    document.getElementById('icons-input').addEventListener('input', (e) => {
+      const icons = e.target.value.split(' ').filter(i => i.trim());
+      const display = document.getElementById('icons-display');
+      display.innerHTML = icons.map(icon => `<span>${icon}</span>`).join('');
+    });
+
+    document.getElementById('copy-css').addEventListener('click', async () => {
+      const style = document.querySelector('style').textContent;
+      try {
+        await navigator.clipboard.writeText(style);
+        alert('CSS copié !');
+      } catch (err) {
+        alert('Regarde le code dans DevTools');
+      }
+    });
+
+    document.getElementById('copy-html').addEventListener('click', async () => {
+      const html = document.getElementById('html-code').textContent;
+      try {
+        await navigator.clipboard.writeText(html);
+        alert('HTML copié !');
+      } catch (err) {
+        alert('Regarde le code ci-dessus');
+      }
+    });
+  </script>
+</body>
+</html>

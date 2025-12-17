@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glass Toggle Switch Clean</title>
+    <style>
+        /* Defs */
+        @property --toggle-angle-1 {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: -75deg;
+        }
+
+        @property --toggle-angle-2 {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: -45deg;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --anim--hover-time: 400ms;
+            --anim--hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
+            --toggle-active-color: rgba(69, 176, 155, 1);
+            --toggle-reflection-r: 180;
+            --toggle-reflection-g: 240;
+            --toggle-reflection-b: 230;
+            --toggle-reflection-opacity: 0.15;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .demo-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-row {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .label {
+            color: white;
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        /* ========== GLASS TOGGLE SWITCH V3 ========== */
+        .glass-toggle-wrap {
+            --toggle-width: 5.5em;
+            --toggle-height: 2.4em;
+            --thumb-size: 2em;
+            --thumb-offset: 0.2em;
+            --border-width: clamp(1px, 0.0625em, 3px);
+            
+            position: relative;
+            font-size: 16px;
+            width: var(--toggle-width);
+            height: var(--toggle-height);
+            border-radius: 999vw;
+            transition: transform var(--anim--hover-time) var(--anim--hover-ease);
+        }
+
+        /* Border extérieur principal - comme le glass button */
+        .glass-toggle-wrap::after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            inset: 0;
+            border-radius: inherit;
+            width: calc(100% + var(--border-width) * 2);
+            height: calc(100% + var(--border-width) * 2);
+            top: calc(0% - var(--border-width));
+            left: calc(0% - var(--border-width));
+            padding: var(--border-width);
+            box-sizing: border-box;
+            background: conic-gradient(
+                from var(--toggle-angle-1) at 50% 50%,
+                rgba(0, 0, 0, 0.5),
+                rgba(0, 0, 0, 0) 5% 40%,
+                rgba(0, 0, 0, 0.5) 50%,
+                rgba(0, 0, 0, 0) 60% 95%,
+                rgba(0, 0, 0, 0.5)
+            ),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
+            transition: all var(--anim--hover-time) var(--anim--hover-ease),
+                --toggle-angle-1 500ms ease;
+            box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+
+        /* Reflection colorée - comme le glass button */
+        .glass-toggle-wrap::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                rgba(
+                    var(--toggle-reflection-r),
+                    var(--toggle-reflection-g),
+                    var(--toggle-reflection-b),
+                    var(--toggle-reflection-opacity)
+                ),
+                transparent
+            );
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            z-index: 2;
+        }
+
+        .glass-toggle-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .glass-toggle {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            cursor: pointer;
+            transition: all var(--anim--hover-time) var(--anim--hover-ease);
+            z-index: 3;
+        }
+
+        /* Track background */
+        .glass-toggle-track {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                rgba(0, 0, 0, 0.25),
+                rgba(0, 0, 0, 0.1)
+            );
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 -1px 2px rgba(255, 255, 255, 0.1);
+            transition: all var(--anim--hover-time) var(--anim--hover-ease);
+            overflow: hidden;
+        }
+
+        /* Track glow when active */
+        .glass-toggle-track::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                var(--toggle-active-color),
+                color-mix(in srgb, var(--toggle-active-color) 60%, transparent)
+            );
+            opacity: 0;
+            transition: opacity var(--anim--hover-time) var(--anim--hover-ease);
+        }
+
+        .glass-toggle-input:checked + .glass-toggle .glass-toggle-track::before {
+            opacity: 1;
+        }
+
+        /* Shine effect on track - comme le span::after du button */
+        .glass-toggle-track::after {
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: 1;
+            width: calc(100% - var(--border-width));
+            height: calc(100% - var(--border-width));
+            top: calc(0% + var(--border-width) / 2);
+            left: calc(0% + var(--border-width) / 2);
+            box-sizing: border-box;
+            border-radius: inherit;
+            background: linear-gradient(
+                var(--toggle-angle-2),
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.5) 40% 50%,
+                rgba(255, 255, 255, 0) 55%
+            );
+            mix-blend-mode: screen;
+            pointer-events: none;
+            background-size: 200% 200%;
+            background-position: 0% 50%;
+            background-repeat: no-repeat;
+            transition: background-position 500ms var(--anim--hover-ease),
+                --toggle-angle-2 500ms var(--anim--hover-ease);
+        }
+
+        /* Glass thumb */
+        .glass-toggle-thumb {
+            position: absolute;
+            top: var(--thumb-offset);
+            left: var(--thumb-offset);
+            width: var(--thumb-size);
+            height: var(--thumb-size);
+            border-radius: 999vw;
+            background: linear-gradient(
+                -75deg,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.35),
+                rgba(255, 255, 255, 0.1)
+            );
+            backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+            -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+            box-shadow: 
+                inset 0 0.08em 0.08em rgba(0, 0, 0, 0.05),
+                inset 0 -0.08em 0.08em rgba(255, 255, 255, 0.5),
+                0 0.15em 0.08em -0.08em rgba(0, 0, 0, 0.2),
+                0 0 0.06em 0.15em inset rgba(255, 255, 255, 0.2);
+            transition: all var(--anim--hover-time) var(--anim--hover-ease);
+            z-index: 4;
+        }
+
+        /* Thumb conic border */
+        .glass-toggle-thumb::before {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            inset: 0;
+            border-radius: inherit;
+            width: calc(100% + var(--border-width) * 2);
+            height: calc(100% + var(--border-width) * 2);
+            top: calc(0% - var(--border-width));
+            left: calc(0% - var(--border-width));
+            padding: var(--border-width);
+            box-sizing: border-box;
+            background: conic-gradient(
+                from var(--toggle-angle-1) at 50% 50%,
+                rgba(0, 0, 0, 0.5),
+                rgba(0, 0, 0, 0) 5% 40%,
+                rgba(0, 0, 0, 0.5) 50%,
+                rgba(0, 0, 0, 0) 60% 95%,
+                rgba(0, 0, 0, 0.5)
+            ),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
+            transition: all var(--anim--hover-time) var(--anim--hover-ease),
+                --toggle-angle-1 500ms ease;
+            box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+        }
+
+        /* Thumb shine - small top-left highlight */
+        .glass-toggle-thumb::after {
+            content: "";
+            position: absolute;
+            top: 8%;
+            left: 10%;
+            width: 30%;
+            height: 20%;
+            border-radius: 50%;
+            background: radial-gradient(
+                ellipse at 30% 30%,
+                rgba(255, 255, 255, 1),
+                rgba(255, 255, 255, 0.4) 40%,
+                rgba(255, 255, 255, 0) 70%
+            );
+            opacity: 0.85;
+            z-index: 2;
+            transition: opacity var(--anim--hover-time) var(--anim--hover-ease);
+        }
+
+        /* Shadow element */
+        .glass-toggle-shadow {
+            --shadow-offset: 1.5em;
+            position: absolute;
+            width: calc(var(--thumb-size) + var(--shadow-offset));
+            height: calc(var(--thumb-size) + var(--shadow-offset));
+            top: calc(var(--thumb-offset) - var(--shadow-offset) / 2);
+            left: calc(var(--thumb-offset) - var(--shadow-offset) / 2);
+            filter: blur(clamp(2px, 0.125em, 8px));
+            pointer-events: none;
+            transition: all var(--anim--hover-time) var(--anim--hover-ease);
+            z-index: 2;
+        }
+
+        .glass-toggle-shadow::after {
+            content: "";
+            position: absolute;
+            width: var(--thumb-size);
+            height: var(--thumb-size);
+            top: calc(var(--shadow-offset) / 2);
+            left: calc(var(--shadow-offset) / 2);
+            border-radius: 999vw;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
+            transition: all var(--anim--hover-time) var(--anim--hover-ease);
+        }
+
+        /* ========== HOVER STATE ========== */
+        .glass-toggle:hover .glass-toggle-track::after {
+            background-position: 25% 50%;
+        }
+
+        .glass-toggle:hover .glass-toggle-thumb {
+            transform: scale(0.975);
+        }
+
+        .glass-toggle:hover .glass-toggle-shadow {
+            filter: blur(clamp(2px, 0.0625em, 6px));
+        }
+
+        /* ========== CHECKED STATE ========== */
+        .glass-toggle-input:checked + .glass-toggle .glass-toggle-thumb {
+            left: calc(100% - var(--thumb-size) - var(--thumb-offset));
+            background: linear-gradient(
+                -75deg,
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.4)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15))
+            );
+            box-shadow: 
+                inset 0 0.08em 0.08em rgba(0, 0, 0, 0.1),
+                inset 0 -0.08em 0.08em rgba(255, 255, 255, 0.6),
+                0 0.1em 0.03em -0.06em rgba(0, 0, 0, 0.25),
+                0 0 0.03em 0.06em inset rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-toggle-input:checked + .glass-toggle .glass-toggle-thumb::before {
+            --toggle-angle-1: -125deg;
+        }
+
+        .glass-toggle-input:checked + .glass-toggle .glass-toggle-shadow {
+            left: calc(100% - var(--thumb-size) - var(--thumb-offset) - var(--shadow-offset) / 2);
+        }
+
+        /* Rotation du border extérieur en checked */
+        .glass-toggle-input:checked ~ .glass-toggle-wrap::after,
+        .glass-toggle-wrap:has(.glass-toggle-input:checked)::after {
+            --toggle-angle-1: -125deg;
+        }
+
+        /* ========== ACTIVE STATE ========== */
+        .glass-toggle:active .glass-toggle-thumb {
+            transform: scale(0.88);
+            box-shadow: 
+                inset 0 0.08em 0.08em rgba(0, 0, 0, 0.05),
+                inset 0 -0.08em 0.08em rgba(255, 255, 255, 0.5),
+                0 0.08em 0.08em -0.08em rgba(0, 0, 0, 0.2),
+                0 0 0.06em 0.15em inset rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-toggle:active .glass-toggle-thumb::before {
+            --toggle-angle-1: -75deg;
+        }
+
+        .glass-toggle:active .glass-toggle-track::after {
+            background-position: 50% 15%;
+            --toggle-angle-2: -15deg;
+        }
+
+        .glass-toggle-wrap:has(.glass-toggle:active)::after {
+            --toggle-angle-1: -75deg;
+        }
+
+        .glass-toggle:active .glass-toggle-shadow {
+            filter: blur(clamp(2px, 0.125em, 8px));
+        }
+
+        .glass-toggle:active .glass-toggle-shadow::after {
+            opacity: 0.75;
+        }
+
+        /* Focus visible */
+        .glass-toggle-input:focus-visible + .glass-toggle {
+            outline: 2px solid rgba(255, 255, 255, 0.8);
+            outline-offset: 3px;
+        }
+
+        /* ========== SIZE VARIANTS ========== */
+        .glass-toggle-wrap.sm { font-size: 12px; }
+        .glass-toggle-wrap.lg { font-size: 20px; }
+        .glass-toggle-wrap.xl { font-size: 24px; }
+
+        /* Comparaison */
+        .comparison-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h2 style="color: white; text-align: center; margin-bottom: 1rem;">Glass Toggle Switch Clean</h2>
+        <p style="color: rgba(255,255,255,0.8); text-align: center; margin-bottom: 2rem; font-size: 0.9rem;">
+            Avec border extérieur animé et largeur augmentée (5.5em vs 4em)
+        </p>
+        
+        <div class="demo-row">
+            <span class="label">Small<br><span class="comparison-label">(12px)</span></span>
+            <div class="glass-toggle-wrap sm">
+                <input type="checkbox" id="toggle-sm" class="glass-toggle-input">
+                <label for="toggle-sm" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-shadow"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="demo-row">
+            <span class="label">Default<br><span class="comparison-label">(16px)</span></span>
+            <div class="glass-toggle-wrap">
+                <input type="checkbox" id="toggle-default" class="glass-toggle-input" checked>
+                <label for="toggle-default" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-shadow"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="demo-row">
+            <span class="label">Large<br><span class="comparison-label">(20px)</span></span>
+            <div class="glass-toggle-wrap lg">
+                <input type="checkbox" id="toggle-lg" class="glass-toggle-input">
+                <label for="toggle-lg" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-shadow"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="demo-row">
+            <span class="label">Extra Large<br><span class="comparison-label">(24px)</span></span>
+            <div class="glass-toggle-wrap xl">
+                <input type="checkbox" id="toggle-xl" class="glass-toggle-input" checked>
+                <label for="toggle-xl" class="glass-toggle">
+                    <div class="glass-toggle-track"></div>
+                    <div class="glass-toggle-shadow"></div>
+                    <div class="glass-toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.1); border-radius: 0.5rem;">
+            <h3 style="color: white; margin-bottom: 1rem; font-size: 1rem;">✨ Améliorations V3 :</h3>
+            <ul style="color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.8;">
+                <li><strong>Border extérieur animé</strong> : Effet conic-gradient sur le wrapper (comme Glass Button)</li>
+                <li><strong>Reflection colorée</strong> : Overlay subtil personnalisable</li>
+                <li><strong>Largeur augmentée</strong> : 5.5em au lieu de 4em (37% plus large)</li>
+                <li><strong>Shine effect</strong> : Animation de brillance sur la track au survol</li>
+                <li><strong>Animations synchronisées</strong> : Border extérieur, thumb et track coordonnés</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

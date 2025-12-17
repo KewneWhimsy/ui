@@ -1007,6 +1007,23 @@
             <h3>✍️ Typographie</h3>
 
             <div class="control-group">
+              <label>Importer une police</label>
+              <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" style="
+                width: 100%;
+                padding: 0.5rem;
+                border: 2px dashed #e5e7eb;
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-size: var(--text-sm);
+              " />
+              <div id="font-status" style="
+                margin-top: 0.5rem;
+                font-size: var(--text-xs);
+                color: var(--text-light);
+              "></div>
+            </div>
+
+            <div class="control-group">
               <label>Font Base</label>
               <select id="font-base">
                 <option value="system-ui, -apple-system, sans-serif">
@@ -1628,6 +1645,11 @@
             ).value,
             shadowBlur: document.getElementById("glass-shadow-blur").value,
           },
+          importedFonts: Array.from(importedFonts.entries()).map(([name, data]) => ({
+            name,
+            format: data.format,
+            base64: data.base64
+          }))
         };
         localStorage.setItem(
           "design-system-config-pro",
@@ -1669,6 +1691,79 @@
       setupColorInput("color-success", "color-success-text", "--success");
       setupColorInput("color-warning", "color-warning-text", "--warning");
       setupColorInput("color-error", "color-error-text", "--error");
+
+      // Font file import - garde toutes les polices en mémoire
+      const importedFonts = new Map(); // Stocke {fontName: {url, format, base64}}
+      
+      document.getElementById("font-file").addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const statusDiv = document.getElementById("font-status");
+        statusDiv.textContent = "Chargement...";
+        statusDiv.style.color = "var(--text-light)";
+
+        try {
+          // Créer un blob URL pour la police
+          const fontUrl = URL.createObjectURL(file);
+          
+          // Extraire le nom de la police (sans extension)
+          const fontName = file.name.replace(/\.(ttf|otf|woff|woff2)$/i, '');
+          
+          // Déterminer le format
+          const ext = file.name.split('.').pop().toLowerCase();
+          let format = ext;
+          if (ext === 'ttf') format = 'truetype';
+          if (ext === 'otf') format = 'opentype';
+          
+          // Convertir en base64 pour sauvegarde localStorage
+          const reader = new FileReader();
+          const base64Promise = new Promise((resolve) => {
+            reader.onload = (e) => resolve(e.target.result);
+            reader.readAsDataURL(file);
+          });
+          const base64 = await base64Promise;
+          
+          // Stocker la police si pas déjà présente
+          if (!importedFonts.has(fontName)) {
+            importedFonts.set(fontName, { url: fontUrl, format, base64 });
+            
+            // Créer un nouveau @font-face (sans supprimer les anciens)
+            const style = document.createElement('style');
+            style.id = `custom-font-${fontName.replace(/\s/g, '-')}`;
+            style.textContent = `
+              @font-face {
+                font-family: '${fontName}';
+                src: url('${fontUrl}') format('${format}');
+                font-display: swap;
+              }
+            `;
+            document.head.appendChild(style);
+            
+            // Ajouter au select
+            const select = document.getElementById('font-base');
+            const customOption = document.createElement('option');
+            const fontFamily = `'${fontName}', system-ui, sans-serif`;
+            customOption.value = fontFamily;
+            customOption.textContent = `${fontName} (importée)`;
+            select.appendChild(customOption);
+          }
+          
+          // Appliquer la police
+          const fontFamily = `'${fontName}', system-ui, sans-serif`;
+          document.documentElement.style.setProperty('--font-base', fontFamily);
+          document.documentElement.style.setProperty('--font-heading', fontFamily);
+          document.getElementById('font-base').value = fontFamily;
+          
+          statusDiv.textContent = `✓ Police "${fontName}" appliquée (${importedFonts.size} police(s) en mémoire)`;
+          statusDiv.style.color = "var(--success)";
+          
+          saveToLocalStorage();
+        } catch (error) {
+          statusDiv.textContent = `× Erreur: ${error.message}`;
+          statusDiv.style.color = "var(--error)";
+        }
+      });
 
       // Font base
       document.getElementById("font-base").addEventListener("change", (e) => {
@@ -2830,6 +2925,38 @@ Then use the structure:
         const saved = localStorage.getItem("design-system-config-pro");
         if (saved) {
           const config = JSON.parse(saved);
+          
+          // Restaurer les polices importées
+          if (config.importedFonts && config.importedFonts.length > 0) {
+            const select = document.getElementById('font-base');
+            config.importedFonts.forEach(fontData => {
+              const { name, format, base64 } = fontData;
+              
+              // Recréer le @font-face depuis base64
+              const style = document.createElement('style');
+              style.id = `custom-font-${name.replace(/\s/g, '-')}`;
+              style.textContent = `
+                @font-face {
+                  font-family: '${name}';
+                  src: url('${base64}') format('${format}');
+                  font-display: swap;
+                }
+              `;
+              document.head.appendChild(style);
+              
+              // Stocker dans la Map
+              importedFonts.set(name, { url: base64, format, base64 });
+              
+              // Ajouter au select si pas déjà présent
+              const fontFamily = `'${name}', system-ui, sans-serif`;
+              if (!Array.from(select.options).find(opt => opt.value === fontFamily)) {
+                const option = document.createElement('option');
+                option.value = fontFamily;
+                option.textContent = `${name} (importée)`;
+                select.appendChild(option);
+              }
+            });
+          }
 
           // Colors
           Object.entries(config.colors).forEach(([key, value]) => {

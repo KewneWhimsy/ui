@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBD Shop - Catalogue Premium</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Glass Button @property animations */
+    @property --glass-angle-1 {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: -75deg;
+    }
+
+    @property --glass-angle-2 {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: -45deg;
+    }
+
+    :root {
+      --primary: #45b09b;
+      --secondary: #8b5cf6;
+      --accent: #f093fb;
+      --glass-reflection-r: 180;
+      --glass-reflection-g: 240;
+      --glass-reflection-b: 230;
+      --glass-reflection-opacity: 0.15;
+      --glass-shadow-blur: 2px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-attachment: fixed;
+      color: #1f2937;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 1.5rem 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* Page sections */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Catalog Grid */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    /* Product Card */
+    .product-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 2rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      transition: all 0.6s;
+    }
+
+    .product-card:hover::before {
+      left: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1.5rem;
+    }
+
+    .product-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-badge {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .product-origin {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      font-size: 0.875rem;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .product-description {
+      color: rgba(255, 255, 255, 0.95);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .product-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      padding: 0.4rem 0.9rem;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .product-price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      margin-top: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .price-range {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 0.25rem;
+    }
+
+    /* ========== GLASS BUTTON ADVANCED ========== */
+    .glass-button-wrap {
+      position: relative;
+      z-index: 2;
+      border-radius: 999vw;
+      background: transparent;
+      pointer-events: none;
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+      display: inline-block;
+    }
+
+    .glass-button-shadow {
+      --shadow-cuttoff-fix: 2em;
+      position: absolute;
+      width: calc(100% + var(--shadow-cuttoff-fix));
+      height: calc(100% + var(--shadow-cuttoff-fix));
+      top: calc(0% - var(--shadow-cuttoff-fix) / 2);
+      left: calc(0% - var(--shadow-cuttoff-fix) / 2);
+      filter: blur(var(--glass-shadow-blur));
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .glass-button-shadow::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      border-radius: 999vw;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+      width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+      height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+      top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+      left: calc(var(--shadow-cuttoff-fix) - 0.875em);
+      padding: 0.125em;
+      box-sizing: border-box;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+      overflow: visible;
+      opacity: 1;
+    }
+
+    .glass-button {
+      --border-width: clamp(1px, 0.0625em, 4px);
+      all: unset;
+      cursor: pointer;
+      position: relative;
+      pointer-events: auto;
+      z-index: 3;
+      background: linear-gradient(-75deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+      border-radius: 999vw;
+      box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
+        inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
+        0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.2),
+        0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2),
+        0 0 0 0 rgba(255, 255, 255, 1);
+      backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+      -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .glass-button:hover {
+      transform: scale(0.975);
+      backdrop-filter: blur(0.01em);
+      -webkit-backdrop-filter: blur(0.01em);
+      box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
+        inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
+        0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25),
+        0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.5),
+        0 0 0 0 rgba(255, 255, 255, 1);
+    }
+
+    .glass-button span {
+      position: relative;
+      display: block;
+      user-select: none;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.05em;
+      font-weight: 500;
+      font-size: 1em;
+      color: rgba(50, 50, 50, 1);
+      -webkit-font-smoothing: antialiased;
+      text-shadow: 0 0.25em 0.05em rgba(0, 0, 0, 0.1);
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+      padding-inline: 1.5em;
+      padding-block: 0.875em;
+    }
+
+    .glass-button:hover span {
+      text-shadow: 0.025em 0.025em 0.025em rgba(0, 0, 0, 0.12);
+    }
+
+    .glass-button span::after {
+      content: "";
+      display: block;
+      position: absolute;
+      z-index: 1;
+      width: calc(100% - var(--border-width));
+      height: calc(100% - var(--border-width));
+      top: calc(0% + var(--border-width) / 2);
+      left: calc(0% + var(--border-width) / 2);
+      box-sizing: border-box;
+      border-radius: 999vw;
+      overflow: hidden;
+      background: linear-gradient(var(--glass-angle-2), rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 40% 50%, rgba(255, 255, 255, 0) 55%);
+      z-index: 3;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      background-size: 200% 200%;
+      background-position: 0% 50%;
+      background-repeat: no-repeat;
+      transition: background-position 500ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-2 500ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .glass-button:hover span::after {
+      background-position: 25% 50%;
+    }
+
+    .glass-button:active span::after {
+      background-position: 50% 15%;
+      --glass-angle-2: -15deg;
+    }
+
+    .glass-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(var(--glass-reflection-r), var(--glass-reflection-g), var(--glass-reflection-b), var(--glass-reflection-opacity)), transparent);
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+
+    .glass-button::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      border-radius: 999vw;
+      width: calc(100% + var(--border-width));
+      height: calc(100% + var(--border-width));
+      top: calc(0% - var(--border-width) / 2);
+      left: calc(0% - var(--border-width) / 2);
+      padding: var(--border-width);
+      box-sizing: border-box;
+      background: conic-gradient(from var(--glass-angle-1) at 50% 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, 0.5)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-1 500ms ease;
+      box-shadow: inset 0 0 0 calc(var(--border-width)/2) rgba(255, 255, 255, 0.5);
+    }
+
+    .glass-button:hover::after {
+      --glass-angle-1: -125deg;
+    }
+
+    .glass-button:active::after {
+      --glass-angle-1: -75deg;
+    }
+
+    .glass-button-wrap:has(.glass-button:hover) .glass-button-shadow {
+      filter: blur(clamp(2px, 0.0625em, 6px));
+    }
+
+    .glass-button-wrap:has(.glass-button:hover) .glass-button-shadow::after {
+      top: calc(var(--shadow-cuttoff-fix) - 0.875em);
+      opacity: 1;
+    }
+
+    .glass-button-wrap:has(.glass-button:active) .glass-button-shadow::after {
+      top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+      opacity: 0.75;
+    }
+
+    /* Detail Page */
+    .detail-page {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .detail-header {
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+      margin-bottom: 1rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-content {
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.7;
+    }
+
+    .section-content ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .section-content li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .section-content li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    /* Pricing Table */
+    .pricing-table {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    .pricing-row.best {
+      background: rgba(69, 176, 155, 0.3);
+      border: 1px solid rgba(69, 176, 155, 0.5);
+      font-weight: 600;
+    }
+
+    .quantity {
+      font-weight: 500;
+    }
+
+    .price {
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .catalog-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-page {
+        padding: 1.5rem;
+      }
+
+      .detail-title {
+        font-size: 1.75rem;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Page Title */
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">🌿 CBD Shop Premium</div>
+      <div class="glass-button-wrap">
+        <button class="glass-button" onclick="showPage('catalog')">
+          <span>📦 Catalogue</span>
+        </button>
+        <div class="glass-button-shadow"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Catalog Page -->
+    <div id="catalog" class="page active">
+      <h1 class="page-title">Notre Sélection Premium</h1>
+      <p class="page-subtitle">Découvrez nos produits CBD de qualité exceptionnelle</p>
+
+      <div class="catalog-grid">
+        <!-- Product 1: Guava Kush -->
+        <div class="product-card">
+          <div class="product-header">
+            <h2 class="product-title">Guava Kush</h2>
+            <span class="product-badge">🌸 Fleur</span>
+          </div>
+          
+          <div class="product-origin">🇨🇭 Suisse</div>
+          
+          <p class="product-description">
+            Variété incontournable pour les habitués et experts du CBD qui souhaitent (re)découvrir une fleur de CBD rappelant une vraie fleur THC. Ses notes poivrées, complétées par de l'agrume🍊, restent sur le palais et vous subliment votre expérience🤘.
+          </p>
+
+          <div class="product-tags">
+            <span class="tag">🌶️ Poivre</span>
+            <span class="tag">🍋 Agrumes</span>
+            <span class="tag">🌳 Arbre fruitier</span>
+            <span class="tag">Premium</span>
+          </div>
+
+          <div class="product-price">
+            À partir de 5.1€/g
+            <div class="price-range">Prix dégressifs jusqu'à 50g</div>
+          </div>
+
+          <div class="glass-button-wrap">
+            <button class="glass-button" onclick="showPage('guava')">
+              <span>Voir les détails</span>
+            </button>
+            <div class="glass-button-shadow"></div>
+          </div>
+        </div>
+
+        <!-- Product 2: Dryshift -->
+        <div class="product-card">
+          <div class="product-header">
+            <h2 class="product-title">Dryshift</h2>
+            <span class="product-badge">🍯 Résine</span>
+          </div>
+          
+          <div class="product-origin">🇫🇷 France / 🇨🇭 Suisse</div>
+          
+          <p class="product-description">
+            Notre résine iconique, mêlant qualité et puissance. À la recherche d'un effet puissant ? Notre Dryshift vous assure un hit reproduisant des effets similaire au cannabinoïdes végétales.
+          </p>
+
+          <div class="product-tags">
+            <span class="tag">🌲 Cèdre</span>
+            <span class="tag">🌰 Girofle</span>
+            <span class="tag">🏔️ Afghan</span>
+            <span class="tag">Expert</span>
+          </div>
+
+          <div class="product-price">
+            Prix sur demande
+            <div class="price-range">Produit premium pour connaisseurs</div>
+          </div>
+
+          <div class="glass-button-wrap">
+            <button class="glass-button" onclick="alert('Page Dryshift à venir')">
+              <span>Voir les détails</span>
+            </button>
+            <div class="glass-button-shadow"></div>
+          </div>
+        </div>
+
+        <!-- Product 3: Bonbon D9 -->
+        <div class="product-card">
+          <div class="product-header">
+            <h2 class="product-title">Bonbon D9</h2>
+            <span class="product-badge">🍬 Gummies</span>
+          </div>
+          
+          <div class="product-origin">🇺🇸 Made in USA</div>
+          
+          <p class="product-description">
+            Les gummies D9 30mg sont élaborés pour obtenir une homogénéité des effets sur l'entièreté du bonbon. Infusés au Delta 9, leur goût rappelle celui de la fleur de cannabis avec une légère acidité à la pomme.
+          </p>
+
+          <div class="product-tags">
+            <span class="tag">🫐 Myrtille</span>
+            <span class="tag">🍏 Pomme</span>
+            <span class="tag">🍓 Fraise</span>
+            <span class="tag">100% Infused</span>
+          </div>
+
+          <div class="product-price">
+            À partir de 3.75€/unité
+            <div class="price-range">6€/u • 20€/4 • 40€/9 • 60€/16</div>
+          </div>
+
+          <div class="glass-button-wrap">
+            <button class="glass-button" onclick="alert('Page Bonbon D9 à venir')">
+              <span>Voir les détails</span>
+            </button>
+            <div class="glass-button-shadow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guava Kush Detail Page -->
+    <div id="guava" class="page">
+      <div class="detail-page">
+        <div class="glass-button-wrap" style="margin-bottom: 2rem;">
+          <button class="glass-button" onclick="showPage('catalog')">
+            <span>← Retour au catalogue</span>
+          </button>
+          <div class="glass-button-shadow"></div>
+        </div>
+
+        <div class="detail-header">
+          <h1 class="detail-title">Guava Kush - Fleur CBD Premium</h1>
+          <div class="product-origin" style="display: inline-flex;">🇨🇭 Origine : Suisse</div>
+        </div>
+
+        <div class="detail-grid">
+          <!-- Description -->
+          <div class="detail-section">
+            <h3 class="section-title">📋 Description</h3>
+            <div class="section-content">
+              Variété incontournable pour les habitués et experts du CBD qui souhaitent (re)découvrir une fleur de CBD rappelant une vraie fleur THC. Ses notes poivrées, complétées par de l'agrume, restent sur le palais et vous subliment votre expérience.
+            </div>
+          </div>
+
+          <!-- Arômes -->
+          <div class="detail-section">
+            <h3 class="section-title">🌿 À retenir</h3>
+            <div class="section-content">
+              <ul>
+                <li>Poivre</li>
+                <li>Agrume</li>
+                <li>Arbre fruitier</li>
+                <li>Chlorophylle</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Identité -->
+          <div class="detail-section">
+            <h3 class="section-title">✨ Identité produit</h3>
+            <div class="section-content">
+              <ul>
+                <li>Premium / Qualité</li>
+                <li>Fleur unique</li>
+                <li>Rapprochement vrai canna</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pour qui ? -->
+        <div class="detail-section" style="margin-bottom: 2rem;">
+          <h3 class="section-title">🎯 Pour qui ?</h3>
+          <div class="section-content">
+            <ul>
+              <li>Habitué du CBD / Expert CBD, recherche d'un produit premium</li>
+              <li>Ancien fumeur de cannabis souhaitant une expérience plus intense</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Effets -->
+        <div class="detail-section" style="margin-bottom: 2rem;">
+          <h3 class="section-title">💫 Effets</h3>
+          <div class="section-content">
+            À la recherche d'un effet relaxant ? La Guava Kush oriente vers des effets relaxants, les bienfaits du CBD sans le réveil compliqué du lendemain🔥.
+          </div>
+        </div>
+
+        <!-- Bon mix -->
+        <div class="detail-section" style="margin-bottom: 2rem;">
+          <h3 class="section-title">🎨 Bon mix ?</h3>
+          <div class="section-content">
+            <ul>
+              <li>Résine grasse type Afghan (pour un bon royal !)</li>
+              <li>Orange bud (pour améliorer la sensation d'agrume)</li>
+              <li>Small bud (sélection unique sur notre site à petit prix, pour une expérience plus florale et douce)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="detail-section">
+          <h3 class="section-title">💰 Prix</h3>
+          <div class="section-content">
+            <div class="pricing-table">
+              <div class="pricing-row">
+                <span class="quantity">Petite quantité</span>
+                <span class="price">8.9€/gr</span>
+              </div>
+              <div class="pricing-row">
+                <span class="quantity">5gr (37€)</span>
+                <span class="price">7.4€/gr</span>
+              </div>
+              <div class="pricing-row">
+                <span class="quantity">10gr (65€) + Vendu</span>
+                <span class="price">6.5€/gr</span>
+              </div>
+              <div class="pricing-row">
+                <span class="quantity">20gr (120€)</span>
+                <span class="price">6€/gr</span>
+              </div>
+              <div class="pricing-row best">
+                <span class="quantity">50gr (255€) - MEILLEUR OFFRE</span>
+                <span class="price">5.1€/gr</span>
+              </div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+              🔧 Abonnement : Ce produit est proposé dans la formule de l'abonnement ✅
+            </p>
+          </div>
+        </div>
+
+        <div class="glass-button-wrap" style="margin-top: 2rem;">
+          <button class="glass-button" onclick="alert('Fonctionnalité e-commerce à venir')">
+            <span>🛒 Commander maintenant</span>
+          </button>
+          <div class="glass-button-shadow"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+
+      // Show selected page
+      document.getElementById(pageId).classList.add('active');
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

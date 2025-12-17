@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview des 4 Toggle Versions - V2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            padding: 2rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .toggle-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+        }
+
+        h3 {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* ========== VARIABLES COMMUNES ========== */
+        :root {
+            --toggle-width: 5.5em;
+            --toggle-height: 2.4em;
+            --thumb-size: 2em;
+            --thumb-offset: 0.2em;
+            --border-width: clamp(1px, 0.0625em, 3px);
+            --anim-time: 400ms;
+            --anim-ease: cubic-bezier(0.25, 1, 0.5, 1);
+            --toggle-active-color: #45b09b;
+        }
+
+        @property --toggle-angle-1 {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: -75deg;
+        }
+
+        @property --toggle-angle-2 {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: -45deg;
+        }
+
+        /* Base commune */
+        .toggle-wrap {
+            position: relative;
+            font-size: 16px;
+            width: var(--toggle-width);
+            height: var(--toggle-height);
+            border-radius: 999vw;
+        }
+
+        .toggle-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            cursor: pointer;
+            transition: all var(--anim-time) var(--anim-ease);
+            z-index: 3;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            transition: all var(--anim-time) var(--anim-ease);
+            overflow: hidden;
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: var(--thumb-offset);
+            left: var(--thumb-offset);
+            width: var(--thumb-size);
+            height: var(--thumb-size);
+            border-radius: 999vw;
+            transition: all var(--anim-time) var(--anim-ease);
+            z-index: 4;
+        }
+
+        .toggle-shadow {
+            --shadow-offset: 1.5em;
+            position: absolute;
+            width: calc(var(--thumb-size) + var(--shadow-offset));
+            height: calc(var(--thumb-size) + var(--shadow-offset));
+            top: calc(var(--thumb-offset) - var(--shadow-offset) / 2);
+            left: calc(var(--thumb-offset) - var(--shadow-offset) / 2);
+            filter: blur(clamp(2px, 0.125em, 8px));
+            pointer-events: none;
+            transition: all var(--anim-time) var(--anim-ease);
+            z-index: 2;
+        }
+
+        .toggle-shadow::after {
+            content: "";
+            position: absolute;
+            width: var(--thumb-size);
+            height: var(--thumb-size);
+            top: calc(var(--shadow-offset) / 2);
+            left: calc(var(--shadow-offset) / 2);
+            border-radius: 999vw;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
+            transition: all var(--anim-time) var(--anim-ease);
+        }
+
+        /* Checked state commun */
+        .toggle-input:checked + .toggle .toggle-thumb {
+            left: calc(100% - var(--thumb-size) - var(--thumb-offset));
+        }
+
+        .toggle-input:checked + .toggle .toggle-shadow {
+            left: calc(100% - var(--thumb-size) - var(--thumb-offset) - var(--shadow-offset) / 2);
+        }
+
+        /* ========== VERSION 1 - SIMPLE ========== */
+        .v1 .toggle-track {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.1));
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .v1 .toggle-track::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: var(--toggle-active-color);
+            opacity: 0;
+            transition: opacity var(--anim-time) var(--anim-ease);
+        }
+
+        .v1 .toggle-input:checked + .toggle .toggle-track::before {
+            opacity: 1;
+        }
+
+        .v1 .toggle-thumb {
+            background: linear-gradient(-75deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            box-shadow: 0 0.15em 0.08em -0.08em rgba(0, 0, 0, 0.2);
+        }
+
+        /* ========== VERSION 2 - SIMPLE+ ========== */
+        .v2 .toggle-track {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.1));
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 -1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .v2 .toggle-track::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--toggle-active-color), color-mix(in srgb, var(--toggle-active-color) 60%, transparent));
+            opacity: 0;
+            transition: opacity var(--anim-time) var(--anim-ease);
+        }
+
+        .v2 .toggle-input:checked + .toggle .toggle-track::before {
+            opacity: 1;
+        }
+
+        .v2 .toggle-thumb {
+            background: linear-gradient(-75deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(2px);
+            box-shadow: 
+                inset 0 0.08em 0.08em rgba(0, 0, 0, 0.05),
+                inset 0 -0.08em 0.08em rgba(255, 255, 255, 0.5),
+                0 0.15em 0.08em -0.08em rgba(0, 0, 0, 0.2);
+        }
+
+        .v2 .toggle-thumb::after {
+            content: "";
+            position: absolute;
+            top: 12%;
+            left: 15%;
+            width: 35%;
+            height: 30%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.4) 40%, transparent 70%);
+            opacity: 0.8;
+            z-index: 2;
+        }
+
+        .v2 .toggle-input:checked + .toggle .toggle-thumb {
+            background: linear-gradient(-75deg, 
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.4)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15))
+            );
+        }
+
+        /* ========== VERSION 3 - INTERMÉDIAIRE ========== */
+        .v3 .toggle-track {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.1));
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 -1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .v3 .toggle-track::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--toggle-active-color), color-mix(in srgb, var(--toggle-active-color) 60%, transparent));
+            opacity: 0;
+            transition: opacity var(--anim-time) var(--anim-ease);
+        }
+
+        .v3 .toggle-input:checked + .toggle .toggle-track::before {
+            opacity: 1;
+        }
+
+        .v3 .toggle-track::after {
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: 1;
+            width: calc(100% - var(--border-width));
+            height: calc(100% - var(--border-width));
+            top: calc(0% + var(--border-width) / 2);
+            left: calc(0% + var(--border-width) / 2);
+            box-sizing: border-box;
+            border-radius: inherit;
+            background: linear-gradient(
+                var(--toggle-angle-2),
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.5) 40% 50%,
+                rgba(255, 255, 255, 0) 55%
+            );
+            mix-blend-mode: screen;
+            pointer-events: none;
+            background-size: 200% 200%;
+            background-position: 0% 50%;
+            background-repeat: no-repeat;
+            transition: background-position 500ms var(--anim-ease), --toggle-angle-2 500ms var(--anim-ease);
+        }
+
+        .v3 .toggle:hover .toggle-track::after {
+            background-position: 25% 50%;
+        }
+
+        .v3 .toggle-thumb {
+            background: linear-gradient(-75deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+            box-shadow: 
+                inset 0 0.08em 0.08em rgba(0, 0, 0, 0.05),
+                inset 0 -0.08em 0.08em rgba(255, 255, 255, 0.5),
+                0 0.15em 0.08em -0.08em rgba(0, 0, 0, 0.2),
+                0 0 0.06em 0.15em inset rgba(255, 255, 255, 0.2);
+        }
+
+        .v3 .toggle-thumb::after {
+            content: "";
+            position: absolute;
+            top: 12%;
+            left: 15%;
+            width: 35%;
+            height: 30%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.4) 40%, transparent 70%);
+            opacity: 0.85;
+            z-index: 2;
+        }
+
+        .v3 .toggle-input:checked + .toggle .toggle-thumb {
+            background: linear-gradient(-75deg, 
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.4)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15))
+            );
+        }
+        .v3 .toggle:active .toggle-track::after {
+            background-position: 50% 15%;
+            --toggle-angle-2: -15deg;
+        }
+        /* ========== VERSION 4 - COMPLET (GLASS) ========== */
+        .v4.toggle-wrap::after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            inset: 0;
+            border-radius: inherit;
+            width: calc(100% + var(--border-width) * 2);
+            height: calc(100% + var(--border-width) * 2);
+            top: calc(0% - var(--border-width));
+            left: calc(0% - var(--border-width));
+            padding: var(--border-width);
+            box-sizing: border-box;
+            background: conic-gradient(
+                from var(--toggle-angle-1) at 50% 50%,
+                rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%,
+                rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%,
+                rgba(0, 0, 0, 0.5)
+            ), linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
+            transition: all var(--anim-time) var(--anim-ease), --toggle-angle-1 500ms ease;
+            box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+
+        .v4.toggle-wrap::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(180, 240, 230, 0.15), transparent);
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            z-index: 2;
+        }
+
+        .v4 .toggle-track {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.1));
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 -1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .v4 .toggle-track::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--toggle-active-color), color-mix(in srgb, var(--toggle-active-color) 60%, transparent));
+            opacity: 0;
+            transition: opacity var(--anim-time) var(--anim-ease);
+        }
+
+        .v4 .toggle-input:checked + .toggle .toggle-track::before {
+            opacity: 1;
+        }
+
+        .v4 .toggle-track::after {
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: 1;
+            width: calc(100% - var(--border-width));
+            height: calc(100% - var(--border-width));
+            top: calc(0% + var(--border-width) / 2);
+            left: calc(0% + var(--border-width) / 2);
+            box-sizing: border-box;
+            border-radius: inherit;
+            background: linear-gradient(
+                var(--toggle-angle-2),
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.5) 40% 50%,
+                rgba(255, 255, 255, 0) 55%
+            );
+            mix-blend-mode: screen;
+            pointer-events: none;
+            background-size: 200% 200%;
+            background-position: 0% 50%;
+            background-repeat: no-repeat;
+            transition: background-position 500ms var(--anim-ease), --toggle-angle-2 500ms var(--anim-ease);
+        }
+
+        .v4 .toggle:hover .toggle-track::after {
+            background-position: 25% 50%;
+        }
+
+        .v4 .toggle-thumb {
+            background: linear-gradient(-75deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+            box-shadow: 
+                inset 0 0.08em 0.08em rgba(0, 0, 0, 0.05),
+                inset 0 -0.08em 0.08em rgba(255, 255, 255, 0.5),
+                0 0.15em 0.08em -0.08em rgba(0, 0, 0, 0.2),
+                0 0 0.06em 0.15em inset rgba(255, 255, 255, 0.2);
+        }
+
+        .v4 .toggle-thumb::before {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            inset: 0;
+            border-radius: inherit;
+            width: calc(100% + var(--border-width) * 2);
+            height: calc(100% + var(--border-width) * 2);
+            top: calc(0% - var(--border-width));
+            left: calc(0% - var(--border-width));
+            padding: var(--border-width);
+            box-sizing: border-box;
+            background: conic-gradient(
+                from var(--toggle-angle-1) at 50% 50%,
+                rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%,
+                rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%,
+                rgba(0, 0, 0, 0.5)
+            ), linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
+            transition: all var(--anim-time) var(--anim-ease), --toggle-angle-1 500ms ease;
+            box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+        }
+
+        .v4 .toggle-thumb::after {
+            content: "";
+            position: absolute;
+            top: 12%;
+            left: 15%;
+            width: 35%;
+            height: 30%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.4) 40%, transparent 70%);
+            opacity: 0.85;
+            z-index: 2;
+        }
+
+        .v4 .toggle:hover .toggle-thumb {
+            transform: scale(0.975);
+        }
+
+        .v4 .toggle:hover .toggle-shadow {
+            filter: blur(clamp(2px, 0.0625em, 6px));
+        }
+
+        .v4 .toggle-input:checked + .toggle .toggle-thumb {
+            background: linear-gradient(-75deg, 
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.4)),
+                color-mix(in srgb, var(--toggle-active-color) 50%, rgba(255, 255, 255, 0.15))
+            );
+        }
+
+        .v4 .toggle-input:checked + .toggle .toggle-thumb::before {
+            --toggle-angle-1: -125deg;
+        }
+
+        .v4.toggle-wrap:has(.toggle-input:checked)::after {
+            --toggle-angle-1: -125deg;
+        }
+
+        .v4 .toggle:active .toggle-thumb {
+            transform: scale(0.88);
+        }
+
+        .v4 .toggle:active .toggle-thumb::before {
+            --toggle-angle-1: -75deg;
+        }
+
+        .v4 .toggle:active .toggle-track::after {
+            background-position: 50% 15%;
+            --toggle-angle-2: -15deg;
+        }
+
+        .v4.toggle-wrap:has(.toggle:active)::after {
+            --toggle-angle-1: -75deg;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Version 1 - Simple -->
+        <div class="toggle-demo">
+            <h3>Version 1 - Simple</h3>
+            <p class="description">Track basique + Thumb simple + Shadow<br>Animation uniquement au toggle</p>
+            <div class="toggle-wrap v1">
+                <input type="checkbox" id="toggle-v1" class="toggle-input" checked>
+                <label for="toggle-v1" class="toggle">
+                    <div class="toggle-track"></div>
+                    <div class="toggle-shadow"></div>
+                    <div class="toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Version 2 - Simple+ -->
+        <div class="toggle-demo">
+            <h3>Version 2 - Simple+</h3>
+            <p class="description">Track avec glow + Thumb backdrop-filter + Highlight<br>Animation uniquement au toggle</p>
+            <div class="toggle-wrap v2">
+                <input type="checkbox" id="toggle-v2" class="toggle-input" checked>
+                <label for="toggle-v2" class="toggle">
+                    <div class="toggle-track"></div>
+                    <div class="toggle-shadow"></div>
+                    <div class="toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Version 3 - Intermédiaire -->
+        <div class="toggle-demo">
+            <h3>Version 3 - Intermédiaire</h3>
+            <p class="description">Tout de V2 + Shine effect sur la track<br>Le gradient bouge au toggle</p>
+            <div class="toggle-wrap v3">
+                <input type="checkbox" id="toggle-v3" class="toggle-input" checked>
+                <label for="toggle-v3" class="toggle">
+                    <div class="toggle-track"></div>
+                    <div class="toggle-shadow"></div>
+                    <div class="toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Version 4 - Complet (Glass) -->
+        <div class="toggle-demo">
+            <h3>Version 4 - Complet (Glass)</h3>
+            <p class="description">Tout + Border wrapper + Reflection + Hover effects<br>Expérience complète</p>
+            <div class="toggle-wrap v4">
+                <input type="checkbox" id="toggle-v4" class="toggle-input" checked>
+                <label for="toggle-v4" class="toggle">
+                    <div class="toggle-track"></div>
+                    <div class="toggle-shadow"></div>
+                    <div class="toggle-thumb"></div>
+                </label>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

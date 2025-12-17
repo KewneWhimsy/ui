@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon's CBD Shop - Catalogue Premium</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Page Switching */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Catalog Page */
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .product-card:hover::before {
+            left: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-type {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .product-badge {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .product-description {
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            padding: 0.4rem 0.9rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            font-size: 0.85rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .price-range {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .view-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .view-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* Detail Page */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-card h2 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-card h3 {
+            font-size: 1.25rem;
+            color: white;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .detail-card p, .detail-card li {
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .detail-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .detail-card li {
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .detail-card li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: bold;
+        }
+
+        .price-table {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .price-row:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fbbf24;
+        }
+
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .warning-box {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid #ef4444;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🌿 Simon's CBD Shop</div>
+            <button class="nav-btn active" onclick="showPage('catalog')">📦 Catalogue</button>
+        </div>
+    </div>
+
+    <!-- Catalog Page -->
+    <div id="catalog" class="page active">
+        <div class="container">
+            <h1 class="page-title">Catalogue Premium CBD</h1>
+            <p class="page-subtitle">Sélection experte de produits CBD haut de gamme</p>
+
+            <div class="products-grid">
+                <!-- Product 1: Guava Kush -->
+                <div class="product-card" onclick="showPage('guava-kush')">
+                    <div class="product-header">
+                        <div>
+                            <h2 class="product-title">Guava Kush</h2>
+                            <p class="product-type">Fleur CBD Premium</p>
+                        </div>
+                        <span class="product-badge">🇨🇭 Suisse</span>
+                    </div>
+                    
+                    <p class="product-description">
+                        🌱 Variété incontournable pour les habitués et experts du CBD qui souhaitent (re)découvrir une fleur de CBD rappelant une vraie fleur THC. Ses notes poivrées, complétées par de l'agrume🍊, restent sur le palais et vous subliment votre expérience🍃.
+                    </p>
+
+                    <div class="product-tags">
+                        <span class="tag">Poivre</span>
+                        <span class="tag">Agrume</span>
+                        <span class="tag">Arbre fruitier</span>
+                        <span class="tag">Expert CBD</span>
+                    </div>
+
+                    <div class="product-footer">
+                        <span class="price-range">5.1€ - 8.9€/g</span>
+                        <button class="view-btn">Voir détails →</button>
+                    </div>
+                </div>
+
+                <!-- Product 2: Dryshift -->
+                <div class="product-card" onclick="showPage('dryshift')">
+                    <div class="product-header">
+                        <div>
+                            <h2 class="product-title">Dryshift ⚡</h2>
+                            <p class="product-type">Résine Premium</p>
+                        </div>
+                        <span class="product-badge">🇫🇷 🇨🇭 FR/CH</span>
+                    </div>
+                    
+                    <p class="product-description">
+                        Notre résine iconique, mêlant qualité et puissance. À la recherche d'un effet puissant ? Notre Dryshift vous assure un hit reproduisant des effets similaire au cannabinoïdes végétales.
+                    </p>
+
+                    <div class="product-tags">
+                        <span class="tag">Cèdre</span>
+                        <span class="tag">Girofle</span>
+                        <span class="tag">Afghan</span>
+                        <span class="tag">Expert niveau</span>
+                    </div>
+
+                    <div class="product-footer">
+                        <span class="price-range">Prix sur demande</span>
+                        <button class="view-btn">Voir détails →</button>
+                    </div>
+                </div>
+
+                <!-- Product 3: Bonbon D9 -->
+                <div class="product-card" onclick="showPage('bonbon-d9')">
+                    <div class="product-header">
+                        <div>
+                            <h2 class="product-title">Bonbon D9</h2>
+                            <p class="product-type">Gummies 30mg Delta-9</p>
+                        </div>
+                        <span class="product-badge">🇺🇸 USA</span>
+                    </div>
+                    
+                    <p class="product-description">
+                        Les gummies D9 que nous avons le plaisir de vous présenter sont élaboré de manière à obtenir une homogénéités des effets sur l'entièreté du bonbon, ils sont infusé au delta 9. Son goût rappel celui de la fleur de cannabis et d'une légère acidité à la pomme.
+                    </p>
+
+                    <div class="product-tags">
+                        <span class="tag">30mg Delta-9</span>
+                        <span class="tag">Goût cannabis</span>
+                        <span class="tag">100% légal</span>
+                        <span class="tag">Made in USA</span>
+                    </div>
+
+                    <div class="product-footer">
+                        <span class="price-range">6€ - 60€</span>
+                        <button class="view-btn">Voir détails →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guava Kush Detail Page -->
+    <div id="guava-kush" class="page">
+        <div class="container">
+            <h1 class="page-title">🌸 Guava Kush - Fleur CBD Premium</h1>
+            <p class="page-subtitle">Origine Suisse 🇨🇭 • Qualité Premium • Rapprochement vrai canna</p>
+
+            <div class="detail-grid">
+                <!-- Description -->
+                <div class="detail-card">
+                    <h2>📋 Description</h2>
+                    <p>
+                        <strong>🌱 Variété incontournable</strong> pour les habitués et experts du CBD qui souhaitent (re)découvrir une fleur de CBD rappelant une vraie fleur THC.
+                    </p>
+                    <p>
+                        Ses notes poivrées, complétées par de l'agrume 🍊, restent sur le palais et vous subliment votre expérience 🍃.
+                    </p>
+
+                    <h3>🌿 Arômes</h3>
+                    <ul>
+                        <li>Poivre</li>
+                        <li>Agrume</li>
+                        <li>Arbre fruitier</li>
+                        <li>Chlorophylle</li>
+                    </ul>
+
+                    <h3>👥 Pour qui ? 🧐</h3>
+                    <ul>
+                        <li>Habitué du CBD / Expert CBD</li>
+                        <li>Recherche d'un produit premium</li>
+                        <li>Ancien fumeur de cannabis souhaitant une expérience plus intense</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>✨ Identité produit :</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Premium / qualité</li>
+                            <li>Fleur unique</li>
+                            <li>Rapprochement vrai canna</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Prix -->
+                <div class="detail-card">
+                    <h2>💰 Grille tarifaire</h2>
+                    <p>Prix dégressif selon la quantité commandée</p>
+
+                    <div class="price-table">
+                        <div class="price-row">
+                            <span>Petite quantité</span>
+                            <span><strong>8.9€/gr</strong></span>
+                        </div>
+                        <div class="price-row">
+                            <span>5gr (37€)</span>
+                            <span><strong>7.4€/gr</strong></span>
+                        </div>
+                        <div class="price-row">
+                            <span>10gr (65€) <em>+ Vendu</em></span>
+                            <span><strong>6.5€/gr</strong></span>
+                        </div>
+                        <div class="price-row">
+                            <span>20gr (120€)</span>
+                            <span><strong>6€/gr</strong></span>
+                        </div>
+                        <div class="price-row">
+                            <span>50gr (255€) ⭐ MEILLEUR OFFRE</span>
+                            <span><strong>5.1€/gr</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 1.5rem;">
+                        <strong>🔖 Abonnement disponible</strong>
+                        <p style="margin-top: 0.5rem; margin-bottom: 0;">
+                            Ce produit est proposé dans la formule de l'abonnement ✅
+                        </p>
+                    </div>
+
+                    <h3>💡 Bon mix ?</h3>
+                    <ul>
+                        <li><strong>Résine grasse type Afghan</strong> (pour un bon royal !)</li>
+                        <li><strong>Orange bud</strong> (pour améliorer la sensation d'agrume)</li>
+                        <li><strong>Small bud</strong> (sélection unique sur notre site à petit prix, pour une expérience plus florale et douce)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button class="nav-btn" onclick="showPage('catalog')" style="margin: 2rem auto; display: block;">
+                ← Retour au catalogue
+            </button>
+        </div>
+    </div>
+
+    <!-- Dryshift Detail Page -->
+    <div id="dryshift" class="page">
+        <div class="container">
+            <h1 class="page-title">⚡ Dryshift - Résine Premium</h1>
+            <p class="page-subtitle">Origine France 🇫🇷 / Suisse 🇨🇭 • Puissance • Expert niveau</p>
+
+            <div class="detail-grid">
+                <!-- Description -->
+                <div class="detail-card">
+                    <h2>📋 Description</h2>
+                    <p>
+                        <strong>Notre résine iconique</strong>, mêlant qualité et puissance.
+                    </p>
+                    <p>
+                        À la recherche d'un effet puissant ? Notre Dryshift vous assure un hit reproduisant des effets similaire au cannabinoïdes végétales.
+                    </p>
+
+                    <h3>🌿 Goûts & Arômes</h3>
+                    <ul>
+                        <li>Cèdre</li>
+                        <li>Girofle</li>
+                        <li>Afghan</li>
+                        <li>Chlorophylle</li>
+                    </ul>
+
+                    <h3>👥 Pour qui ? 🧐</h3>
+                    <ul>
+                        <li>Expert CBD et molécule</li>
+                        <li>Recherche d'un produit premium</li>
+                        <li>Ancien fumeur de cannabis souhaitant une expérience plus intense</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>⚡ Caractéristiques :</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Résine de haute qualité</li>
+                            <li>Effet puissant et reproductible</li>
+                            <li>Production Franco-Suisse</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="detail-card">
+                    <h2>💼 Informations produit</h2>
+                    
+                    <h3>🏭 Origine</h3>
+                    <p>
+                        Production en <strong>France 🇫🇷</strong> et <strong>Suisse 🇨🇭</strong>, garantissant une qualité irréprochable et un respect des normes européennes les plus strictes.
+                    </p>
+
+                    <h3>💰 Prix</h3>
+                    <div class="info-box">
+                        <p style="margin: 0;">
+                            <strong>Prix sur demande</strong><br>
+                            Contactez-nous pour obtenir un devis personnalisé selon vos besoins.
+                        </p>
+                    </div>
+
+                    <h3>🎯 Niveau recommandé</h3>
+                    <p>
+                        Ce produit s'adresse aux <strong>experts et connaisseurs</strong> du CBD. 
+                        Si vous débutez, nous recommandons de commencer par des produits à concentration plus faible.
+                    </p>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Attention</strong>
+                        <p style="margin-top: 0.5rem; margin-bottom: 0;">
+                            Produit concentré réservé aux utilisateurs expérimentés. 
+                            Commencez par de petites quantités et ajustez selon vos besoins.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="nav-btn" onclick="showPage('catalog')" style="margin: 2rem auto; display: block;">
+                ← Retour au catalogue
+            </button>
+        </div>
+    </div>
+
+    <!-- Bonbon D9 Detail Page -->
+    <div id="bonbon-d9" class="page">
+        <div class="container">
+            <h1 class="page-title">🍬 Bonbon D9 - Gummies Delta-9</h1>
+            <p class="page-subtitle">Made in USA 🇺🇸 • 30mg par bonbon • 100% légal • Saveur cannabis & pomme</p>
+
+            <div class="detail-grid">
+                <!-- Description -->
+                <div class="detail-card">
+                    <h2>📋 Produit et description</h2>
+                    <p>
+                        Les gummies D9 que nous avons le plaisir de vous présenter sont <strong>élaboré de manière à obtenir une homogénéités des effets sur l'entièreté du bonbon</strong>, ils sont infusé au delta 9.
+                    </p>
+                    <p>
+                        Son goût rappel celui de la fleur de cannabis et d'une légère acidité à la pomme.
+                    </p>
+
+                    <h3>🤔 Pourquoi choisir notre sélection de gummies D9 ?</h3>
+                    <p>
+                        Tout simplement pour <strong>la qualité des effets apporté par le delta 9</strong>. 
+                        Vous ressentez un apaisement similaire à une forte concentration de cannabinoïdes végétales.
+                    </p>
+
+                    <div class="highlight-box">
+                        <strong>✨ Fabrication :</strong>
+                        <p style="margin-top: 0.5rem; margin-bottom: 0;">
+                            Fabrication par une usine américaine spécialisée dans les edibles et comestibles, leader aux États-Unis. 
+                            Ces gummies sont confectionnées avec une attention particulière à chaque détail, depuis le choix des ingrédients jusqu'à la méthode de cuisson.
+                        </p>
+                    </div>
+
+                    <h3>🎨 Arômes disponibles</h3>
+                    <p>😋😋 (bleu - myrtille / Vert - pomme / rouge - fraise)</p>
+                </div>
+
+                <!-- Prix -->
+                <div class="detail-card">
+                    <h2>💰 Prix pour les gummies D9 - 30mg</h2>
+
+                    <div class="price-table">
+                        <div class="price-row">
+                            <span>1 bonbon</span>
+                            <span><strong>6€/u</strong></span>
+                        </div>
+                        <div class="price-row">
+                            <span>4 bonbons</span>
+                            <span><strong>20€</strong> (5€/u)</span>
+                        </div>
+                        <div class="price-row">
+                            <span>9 bonbons</span>
+                            <span><strong>40€</strong> (4,4€/u)</span>
+                        </div>
+                        <div class="price-row">
+                            <span>16 bonbons</span>
+                            <span><strong>60€</strong> (3,75€/u)</span>
+                        </div>
+                        <div class="price-row">
+                            <span>20 bonbons ⭐</span>
+                            <span><strong>75€</strong> (3,75€/u)</span>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 1.5rem;">
+                        <strong>📦 Liste de souhaits</strong>
+                        <p style="margin-top: 0.5rem; margin-bottom: 0;">
+                            À partir de 1.50 €
+                        </p>
+                        <p>
+                            Avec l'interdiction des néo-cannabinoïdes synthétiques en France, les gummies et autres produits à base de THC sont plus en plus populaires, ces bonbons offrant une alternative discrète, savoureuse ET 100% LÉGALE à la consommation traditionnelle de cannabis.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warnings -->
+            <div class="detail-grid" style="margin-top: 2rem;">
+                <div class="detail-card">
+                    <h2>⚠️ Consommation</h2>
+                    <div class="warning-box">
+                        <p>
+                            Si vous êtes novice ou que vous n'êtes pas habitués à la puissance d'une plus importante concentration en D9, nous préconisons de consommer d'abord <strong>1/2 d'un bonbon, attendez 60 à 90 min</strong> avant d'évaluer les effets, puis ajustez si besoin.
+                        </p>
+                        <p>
+                            Ne cumulez pas avec d'autres produits contenant des cannabinoïdes lors de la première prise.
+                        </p>
+                    </div>
+
+                    <h3>⚖️ Législation</h3>
+                    <div class="info-box">
+                        <p>
+                            Nos bonbons "gummies" respectent la législation européenne avec un taux de THC inférieur à 0,3 %. 
+                            Chaque lot est rigoureusement testé par un laboratoire tiers agréé pour garantir leur puissance et leur sécurité.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h2>❓ FAQ</h2>
+
+                    <h3>Les gummies ont-ils un effet "plannant" ?</h3>
+                    <p>
+                        Certaines personnes décrivent des effets légers et clairs, d'autres plutôt énergisant et ouvrir l'appétit, 
+                        enfin certains ressentent moins d'effet. La réponse est personnelle et dépend de nombreux facteurs 
+                        (tolérance, métabolisme, habitude, moment de la prise).
+                    </p>
+
+                    <h3>Quel dose est recommandée ?</h3>
+                    <p>
+                        Commencez par <strong>½ bonbon (≈ 15 mg de D9)</strong>. 
+                        Patientez 60-90 min avant toute prise supplémentaire. 
+                        La réponse est personnelle et dépend de nombreux facteurs (tolérance, métabolisme, habitude, moment de la prise).
+                    </p>
+
+                    <h3>Les gummies sont-ils sûrs ?</h3>
+                    <p>
+                        Ils sont fabriqués à partir d'ingrédients de qualité et testées en laboratoire. 
+                        Respectez les dosages, surtout si vous êtes novice ou sensible aux cannabinoïdes.
+                    </p>
+
+                    <h3>Puis-je conduire après consommation ?</h3>
+                    <div class="warning-box">
+                        <p style="margin: 0;">
+                            Il est déconseillé de conduire ou d'utiliser des machines après ingestion. 
+                            Même à dose modérée, les cannabinoïdes peuvent altérer l'attention.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="nav-btn" onclick="showPage('catalog')" style="margin: 2rem auto; display: block;">
+                ← Retour au catalogue
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update nav button
+            const navBtn = document.querySelector('.nav-btn');
+            if (pageId === 'catalog') {
+                navBtn.textContent = '📦 Catalogue';
+                navBtn.classList.add('active');
+            } else {
+                navBtn.textContent = '📦 Retour catalogue';
+                navBtn.classList.remove('active');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

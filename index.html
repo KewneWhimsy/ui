@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Design System - Index</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: white;
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 3rem;
+      font-size: 1.125rem;
+    }
+
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+
+    .section p {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .cards {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .card {
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 2px solid #e5e7eb;
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .card .meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .card .meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .card .description {
+      color: #6b7280;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .card .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: #e0e7ff;
+      color: #4338ca;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+
+    .recommended {
+      position: relative;
+    }
+
+    .recommended::before {
+      content: "⭐ RECOMMANDÉ";
+      position: absolute;
+      top: -0.75rem;
+      right: 1rem;
+      background: #10b981;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 2px solid #e5e7eb;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 UI Design System</h1>
+    <p class="subtitle">Générateur de design systems + composants isolés</p>
+
+    <div class="section">
+      <h2>🚀 Générateur (Recommandé)</h2>
+      <p>Pour créer rapidement un design system complet avec prévisualisation en temps réel.</p>
+      
+      <div class="cards">
+        <div class="card recommended">
+          <h3>Design System Generator - Light</h3>
+          <div class="meta">
+            <span>📦 ~60KB</span>
+            <span>⚡ Rapide</span>
+          </div>
+          <div class="description">
+            Générateur complet optimisé. Parfait pour 95% des cas d'usage.
+          </div>
+          <div class="features">
+            <span class="badge">Presets</span>
+            <span class="badge">Copy CSS</span>
+            <span class="badge">Export JSON</span>
+            <span class="badge">Glass</span>
+            <span class="badge">Glossy</span>
+          </div>
+          <a href="design-system-generator-light.html" class="btn">Ouvrir ➜</a>
+        </div>
+
+        <div class="card">
+          <h3>Design System Generator - Pro</h3>
+          <div class="meta">
+            <span>📦 ~96KB</span>
+            <span>🎯 Complet</span>
+          </div>
+          <div class="description">
+            Version originale avec tous les effets avancés intégrés. Plus lourd mais tout-en-un.
+          </div>
+          <div class="features">
+            <span class="badge">Glass Advanced</span>
+            <span class="badge">Liquid Glass</span>
+            <span class="badge">Neuemorphism</span>
+            <span class="badge">Tout inclus</span>
+          </div>
+          <a href="design-system-generator-pro.html" class="btn">Ouvrir ➜</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>✨ Composants Avancés (Isolés)</h2>
+      <p>Composants spécialisés extraits pour optimiser le poids. À utiliser quand tu as besoin d'un effet spécifique.</p>
+      
+      <div class="cards">
+        <div class="card">
+          <h3>Glass Advanced Button</h3>
+          <div class="meta">
+            <span>📦 ~18KB</span>
+            <span>💎 Premium</span>
+          </div>
+          <div class="description">
+            Bouton glassmorphism avec reflets customisables et animations CSS @property.
+          </div>
+          <div class="features">
+            <span class="badge">Reflets RGB</span>
+            <span class="badge">Opacity control</span>
+            <span class="badge">Shadow blur</span>
+          </div>
+          <a href="glass-advanced-component.html" class="btn">Ouvrir ➜</a>
+        </div>
+
+        <div class="card">
+          <h3>Liquid Glass Dock</h3>
+          <div class="meta">
+            <span>📦 ~16KB</span>
+            <span>🌊 Effet liquide</span>
+          </div>
+          <div class="description">
+            Dock style macOS avec distorsion SVG pour un effet "liquid glass" unique.
+          </div>
+          <div class="features">
+            <span class="badge">SVG Filter</span>
+            <span class="badge">Dock animé</span>
+            <span class="badge">Icons custom</span>
+          </div>
+          <a href="liquid-glass-component.html" class="btn">Ouvrir ➜</a>
+        </div>
+
+        <div class="card">
+          <h3>Neuemorphism Button</h3>
+          <div class="meta">
+            <span>📦 ~14KB</span>
+            <span>🎯 3D Inset</span>
+          </div>
+          <div class="description">
+            Bouton avec effet 3D profond grâce à des ombres et gradients complexes.
+          </div>
+          <div class="features">
+            <span class="badge">3D Shadows</span>
+            <span class="badge">Inset effect</span>
+            <span class="badge">3 tailles</span>
+          </div>
+          <a href="neuemorphism-component.html" class="btn">Ouvrir ➜</a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <strong>Approche KISS</strong> : Fichiers uniques, aucune dépendance, copier-coller direct<br>
+      HTML/CSS/JS vanilla • 2024
+    </footer>
+  </div>
+</body>
+</html>

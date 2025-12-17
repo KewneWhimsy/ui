@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Design System - Light</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #10b981;
+      --secondary: #8b5cf6;
+      --background: #f9fafb;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --font-base: system-ui, -apple-system, sans-serif;
+      --text-base: 1rem;
+      --btn-padding-y: 0.625rem;
+      --btn-padding-x: 1.5rem;
+      --btn-font-size: 0.875rem;
+      --radius-sm: 0.25rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: var(--font-base);
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--background);
+      user-select: none;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 2rem;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+    }
+
+    .panel {
+      background: var(--surface);
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .panel h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .panel h3 {
+      font-size: 1.125rem;
+      margin: 1.5rem 0 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .control-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .control-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-light);
+    }
+
+    .color-input-wrapper {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      width: 60px;
+      height: 40px;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      background: white;
+      cursor: pointer;
+    }
+
+    .range-value {
+      display: inline-block;
+      margin-left: 0.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      font-family: 'Courier New', monospace;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.875rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-action.secondary {
+      background: var(--text-light);
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .preset-btn {
+      padding: 0.5rem;
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--primary);
+      background: color-mix(in srgb, var(--primary) 5%, white);
+    }
+
+    .preview-section {
+      margin-bottom: 3rem;
+    }
+
+    .preview-section h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .preview-grid {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: start;
+    }
+
+    .btn {
+      padding: var(--btn-padding-y) var(--btn-padding-x);
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: var(--btn-font-size);
+      font-family: var(--font-base);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: color-mix(in srgb, var(--primary) 85%, black);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+      background: color-mix(in srgb, var(--secondary) 85%, black);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-glass {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--text);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-glossy {
+      background: linear-gradient(145deg, 
+        color-mix(in srgb, var(--primary) 90%, white) 0%, 
+        var(--primary) 50%, 
+        color-mix(in srgb, var(--primary) 75%, black) 100%);
+      color: white;
+      box-shadow: 0 4px 15px color-mix(in srgb, var(--primary) 40%, transparent),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-glossy:hover {
+      box-shadow: 0 6px 20px color-mix(in srgb, var(--primary) 50%, transparent),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-glossy::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-glossy:hover::before {
+      left: 100%;
+    }
+
+    .card {
+      background: var(--surface);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      max-width: 350px;
+    }
+
+    .card h4 {
+      margin-bottom: 0.75rem;
+      color: var(--primary);
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .card p {
+      color: var(--text-light);
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.875rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-success { background: var(--success); }
+    .badge-warning { background: var(--warning); }
+    .badge-error { background: var(--error); }
+
+    .alert {
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      border-left: 4px solid;
+    }
+
+    .alert-info {
+      background: color-mix(in srgb, var(--primary) 10%, white);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .alert-success {
+      background: color-mix(in srgb, var(--success) 10%, white);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .alert-warning {
+      background: color-mix(in srgb, var(--warning) 10%, white);
+      border-color: var(--warning);
+      color: var(--warning);
+    }
+
+    .alert-error {
+      background: color-mix(in srgb, var(--error) 10%, white);
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    .input-demo {
+      width: 100%;
+      max-width: 300px;
+      padding: 0.625rem 0.875rem;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-family: var(--font-base);
+      transition: border-color 0.2s;
+    }
+
+    .input-demo:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .bg-showcase {
+      min-height: 200px;
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      background: var(--background);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--success);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: translateY(100%);
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎨 Design System Generator - Light</h1>
+      <p class="subtitle">Version allégée - ~60KB | Composants avancés disponibles séparément</p>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="panel">
+          <h2>⚙️ Configuration</h2>
+
+          <!-- Presets -->
+          <h3>🎯 Presets</h3>
+          <div class="preset-grid">
+            <button class="preset-btn" data-preset="eco">🌿 Eco</button>
+            <button class="preset-btn" data-preset="material">🎨 Material</button>
+            <button class="preset-btn" data-preset="tailwind">💨 Tailwind</button>
+            <button class="preset-btn" data-preset="sunset">🌅 Sunset</button>
+          </div>
+
+          <!-- Couleurs -->
+          <h3>🎨 Couleurs</h3>
+          <div id="colors-container"></div>
+
+          <!-- Typographie -->
+          <h3>✍️ Typographie</h3>
+          <div class="control-group">
+            <label>Font Base</label>
+            <select id="font-base">
+              <option value="system-ui, -apple-system, sans-serif">System</option>
+              <option value="Inter, sans-serif">Inter</option>
+              <option value="'Helvetica Neue', sans-serif">Helvetica</option>
+              <option value="'Segoe UI', sans-serif">Segoe UI</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label>Base Size <span class="range-value" id="text-base-value">1rem</span></label>
+            <input type="range" id="text-base-size" min="12" max="24" value="16" step="1">
+          </div>
+
+          <!-- Button Size -->
+          <h3>🔘 Button Size</h3>
+          <div class="control-group">
+            <label>Scale <span class="range-value" id="btn-size-value">1x</span></label>
+            <input type="range" id="btn-size" min="0.8" max="2" value="1" step="0.1">
+          </div>
+
+          <!-- Border Radius -->
+          <h3>📐 Border Radius</h3>
+          <div class="control-group">
+            <label>Small <span class="range-value" id="radius-sm-value">0.25rem</span></label>
+            <input type="range" id="radius-sm" min="0" max="16" value="4" step="2">
+          </div>
+          <div class="control-group">
+            <label>Medium <span class="range-value" id="radius-md-value">0.5rem</span></label>
+            <input type="range" id="radius-md" min="0" max="24" value="8" step="2">
+          </div>
+          <div class="control-group">
+            <label>Large <span class="range-value" id="radius-lg-value">0.75rem</span></label>
+            <input type="range" id="radius-lg" min="0" max="32" value="12" step="2">
+          </div>
+
+          <!-- Actions -->
+          <button class="btn-action" id="copy-btn">📋 Copier le CSS</button>
+          <button class="btn-action" id="download-btn">📥 Télécharger CSS</button>
+          <button class="btn-action secondary" id="export-json-btn">💾 Export JSON</button>
+          <button class="btn-action secondary" id="import-json-btn">📂 Import JSON</button>
+          <button class="btn-action secondary" id="reset-btn">🔄 Reset</button>
+          <input type="file" id="json-file-input" accept=".json" style="display: none;">
+        </div>
+      </aside>
+
+      <main>
+        <div class="panel">
+          <h2>👁️ Preview</h2>
+
+          <div class="preview-section">
+            <h3>Background</h3>
+            <div class="bg-showcase">
+              <p style="color: var(--text)">Texte sur fond principal</p>
+              <div class="card">
+                <p>Surface (cards, panels...)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-section">
+            <h3>Boutons</h3>
+            <div class="preview-grid">
+              <button class="btn btn-primary">Primary</button>
+              <button class="btn btn-secondary">Secondary</button>
+              <button class="btn btn-outline">Outline</button>
+              <button class="btn btn-glossy">Glossy</button>
+            </div>
+          </div>
+
+          <div class="preview-section">
+            <h3>Glass Effect</h3>
+            <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 2rem; border-radius: var(--radius-lg); display: flex; gap: 1rem;">
+              <button class="btn btn-glass">Glass Button</button>
+            </div>
+          </div>
+
+          <div class="preview-section">
+            <h3>Cards</h3>
+            <div class="preview-grid">
+              <div class="card">
+                <h4>Card Title</h4>
+                <p>Description du contenu avec du texte d'exemple pour voir le rendu.</p>
+                <div style="margin-top: 1rem">
+                  <span class="badge">New</span>
+                  <span class="badge badge-success" style="margin-left: 0.5rem">Bio</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-section">
+            <h3>Badges</h3>
+            <div class="preview-grid">
+              <span class="badge">Primary</span>
+              <span class="badge badge-success">Success</span>
+              <span class="badge badge-warning">Warning</span>
+              <span class="badge badge-error">Error</span>
+            </div>
+          </div>
+
+          <div class="preview-section">
+            <h3>Alerts</h3>
+            <div class="preview-grid" style="flex-direction: column; gap: 1rem">
+              <div class="alert alert-info"><strong>Info:</strong> Message d'information.</div>
+              <div class="alert alert-success"><strong>Succès:</strong> Opération réussie !</div>
+              <div class="alert alert-warning"><strong>Attention:</strong> Action requise.</div>
+              <div class="alert alert-error"><strong>Erreur:</strong> Problème détecté.</div>
+            </div>
+          </div>
+
+          <div class="preview-section">
+            <h3>Inputs</h3>
+            <input type="text" class="input-demo" placeholder="Votre email...">
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Presets
+    const presets = {
+      eco: { primary: '#10b981', secondary: '#059669', background: '#f0fdf4', surface: '#ffffff', text: '#064e3b' },
+      material: { primary: '#6200ee', secondary: '#03dac6', background: '#fafafa', surface: '#ffffff', text: '#212121' },
+      tailwind: { primary: '#3b82f6', secondary: '#8b5cf6', background: '#f9fafb', surface: '#ffffff', text: '#111827' },
+      sunset: { primary: '#f59e0b', secondary: '#ef4444', background: '#fef3c7', surface: '#ffffff', text: '#78350f' }
+    };
+
+    // Couleurs principales
+    const mainColors = ['primary', 'secondary', 'background', 'surface', 'text', 'success', 'warning', 'error'];
+
+    // Generate color inputs
+    const colorsContainer = document.getElementById('colors-container');
+    mainColors.forEach(color => {
+      const div = document.createElement('div');
+      div.className = 'control-group';
+      div.innerHTML = `
+        <label>${color.charAt(0).toUpperCase() + color.slice(1)}</label>
+        <div class="color-input-wrapper">
+          <input type="color" id="color-${color}" value="${getComputedStyle(document.documentElement).getPropertyValue('--' + color).trim()}">
+          <input type="text" id="color-${color}-text" value="${getComputedStyle(document.documentElement).getPropertyValue('--' + color).trim()}">
+        </div>
+      `;
+      colorsContainer.appendChild(div);
+    });
+
+    // Setup color inputs
+    function setupColorInput(colorId, textId, cssVar) {
+      const colorInput = document.getElementById(colorId);
+      const textInput = document.getElementById(textId);
+      
+      colorInput.addEventListener('input', (e) => {
+        const value = e.target.value;
+        textInput.value = value;
+        document.documentElement.style.setProperty(cssVar, value);
+        saveConfig();
+      });
+      
+      textInput.addEventListener('input', (e) => {
+        const value = e.target.value;
+        if (/^#[0-9A-F]{6}$/i.test(value)) {
+          colorInput.value = value;
+          document.documentElement.style.setProperty(cssVar, value);
+          saveConfig();
+        }
+      });
+    }
+
+    mainColors.forEach(color => {
+      setupColorInput(`color-${color}`, `color-${color}-text`, `--${color}`);
+    });
+
+    // Font
+    document.getElementById('font-base').addEventListener('change', (e) => {
+      document.documentElement.style.setProperty('--font-base', e.target.value);
+      saveConfig();
+    });
+
+    // Text size
+    const textSizeInput = document.getElementById('text-base-size');
+    const textSizeValue = document.getElementById('text-base-value');
+    textSizeInput.addEventListener('input', (e) => {
+      const value = e.target.value + 'px';
+      textSizeValue.textContent = (e.target.value / 16).toFixed(2) + 'rem';
+      document.documentElement.style.setProperty('--text-base', value);
+      saveConfig();
+    });
+
+    // Button size
+    const btnSizeInput = document.getElementById('btn-size');
+    const btnSizeValue = document.getElementById('btn-size-value');
+    btnSizeInput.addEventListener('input', (e) => {
+      const scale = parseFloat(e.target.value);
+      btnSizeValue.textContent = scale.toFixed(1) + 'x';
+      document.documentElement.style.setProperty('--btn-padding-y', (10 * scale) + 'px');
+      document.documentElement.style.setProperty('--btn-padding-x', (24 * scale) + 'px');
+      document.documentElement.style.setProperty('--btn-font-size', (14 * scale) + 'px');
+      saveConfig();
+    });
+
+    // Radius
+    ['sm', 'md', 'lg'].forEach(size => {
+      const input = document.getElementById(`radius-${size}`);
+      const value = document.getElementById(`radius-${size}-value`);
+      input.addEventListener('input', (e) => {
+        const val = e.target.value + 'px';
+        value.textContent = (e.target.value / 16).toFixed(3) + 'rem';
+        document.documentElement.style.setProperty(`--radius-${size}`, val);
+        saveConfig();
+      });
+    });
+
+    // Presets
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const preset = presets[btn.dataset.preset];
+        Object.entries(preset).forEach(([key, value]) => {
+          document.getElementById(`color-${key}`).value = value;
+          document.getElementById(`color-${key}-text`).value = value;
+          document.documentElement.style.setProperty(`--${key}`, value);
+        });
+        saveConfig();
+        showToast(`Preset "${btn.dataset.preset}" appliqué !`);
+      });
+    });
+
+    // Generate CSS
+    function generateCSS() {
+      const colors = {};
+      mainColors.forEach(c => {
+        colors[c] = getComputedStyle(document.documentElement).getPropertyValue(`--${c}`).trim();
+      });
+
+      return `:root {
+  /* Couleurs */
+  --primary: ${colors.primary};
+  --secondary: ${colors.secondary};
+  --background: ${colors.background};
+  --surface: ${colors.surface};
+  --text: ${colors.text};
+  --text-light: #6b7280;
+  --success: ${colors.success};
+  --warning: ${colors.warning};
+  --error: ${colors.error};
+  
+  /* Typographie */
+  --font-base: ${getComputedStyle(document.documentElement).getPropertyValue('--font-base').trim()};
+  --text-base: ${getComputedStyle(document.documentElement).getPropertyValue('--text-base').trim()};
+  
+  /* Buttons */
+  --btn-padding-y: ${getComputedStyle(document.documentElement).getPropertyValue('--btn-padding-y').trim()};
+  --btn-padding-x: ${getComputedStyle(document.documentElement).getPropertyValue('--btn-padding-x').trim()};
+  --btn-font-size: ${getComputedStyle(document.documentElement).getPropertyValue('--btn-font-size').trim()};
+  
+  /* Border Radius */
+  --radius-sm: ${getComputedStyle(document.documentElement).getPropertyValue('--radius-sm').trim()};
+  --radius-md: ${getComputedStyle(document.documentElement).getPropertyValue('--radius-md').trim()};
+  --radius-lg: ${getComputedStyle(document.documentElement).getPropertyValue('--radius-lg').trim()};
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Boutons */
+.btn {
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: var(--btn-font-size);
+  font-family: var(--font-base);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--primary) 85%, black);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-glossy {
+  background: linear-gradient(145deg, 
+    color-mix(in srgb, var(--primary) 90%, white) 0%, 
+    var(--primary) 50%, 
+    color-mix(in srgb, var(--primary) 75%, black) 100%);
+  color: white;
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--primary) 40%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glossy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.btn-glossy:hover::before {
+  left: 100%;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.875rem;
+  background: var(--primary);
+  color: white;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-success { background: var(--success); }
+.badge-warning { background: var(--warning); }
+.badge-error { background: var(--error); }
+
+/* Alerts */
+.alert {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+}
+
+.alert-info {
+  background: color-mix(in srgb, var(--primary) 10%, white);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.alert-success {
+  background: color-mix(in srgb, var(--success) 10%, white);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.alert-warning {
+  background: color-mix(in srgb, var(--warning) 10%, white);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.alert-error {
+  background: color-mix(in srgb, var(--error) 10%, white);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+/* Inputs */
+.input {
+  padding: 0.625rem 0.875rem;
+  border: 2px solid #e5e7eb;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-family: var(--font-base);
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+}`;
+    }
+
+    // Copy to clipboard
+    document.getElementById('copy-btn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(generateCSS());
+        showToast('CSS copié dans le presse-papier !');
+      } catch (err) {
+        showToast('Erreur lors de la copie', true);
+      }
+    });
+
+    // Download
+    document.getElementById('download-btn').addEventListener('click', () => {
+      const blob = new Blob([generateCSS()], { type: 'text/css' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'design-system.css';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSS téléchargé !');
+    });
+
+    // Save/Load config
+    function saveConfig() {
+      const config = {
+        colors: {},
+        font: document.getElementById('font-base').value,
+        textSize: document.getElementById('text-base-size').value,
+        btnSize: document.getElementById('btn-size').value,
+        radius: {
+          sm: document.getElementById('radius-sm').value,
+          md: document.getElementById('radius-md').value,
+          lg: document.getElementById('radius-lg').value
+        }
+      };
+      mainColors.forEach(c => {
+        config.colors[c] = document.getElementById(`color-${c}`).value;
+      });
+      localStorage.setItem('design-system-light', JSON.stringify(config));
+    }
+
+    function loadConfig() {
+      const saved = localStorage.getItem('design-system-light');
+      if (saved) {
+        const config = JSON.parse(saved);
+        Object.entries(config.colors).forEach(([key, value]) => {
+          document.getElementById(`color-${key}`).value = value;
+          document.getElementById(`color-${key}-text`).value = value;
+          document.documentElement.style.setProperty(`--${key}`, value);
+        });
+        document.getElementById('font-base').value = config.font;
+        document.getElementById('text-base-size').value = config.textSize;
+        document.getElementById('btn-size').value = config.btnSize;
+        ['sm', 'md', 'lg'].forEach(s => {
+          document.getElementById(`radius-${s}`).value = config.radius[s];
+        });
+        // Trigger updates
+        textSizeInput.dispatchEvent(new Event('input'));
+        btnSizeInput.dispatchEvent(new Event('input'));
+        ['sm', 'md', 'lg'].forEach(s => {
+          document.getElementById(`radius-${s}`).dispatchEvent(new Event('input'));
+        });
+      }
+    }
+
+    // Export JSON
+    document.getElementById('export-json-btn').addEventListener('click', () => {
+      const config = JSON.parse(localStorage.getItem('design-system-light') || '{}');
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'design-system-config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Config exportée !');
+    });
+
+    // Import JSON
+    document.getElementById('import-json-btn').addEventListener('click', () => {
+      document.getElementById('json-file-input').click();
+    });
+
+    document.getElementById('json-file-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const config = JSON.parse(e.target.result);
+            localStorage.setItem('design-system-light', e.target.result);
+            loadConfig();
+            showToast('Config importée !');
+          } catch (err) {
+            showToast('Erreur: fichier invalide', true);
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    // Reset
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      if (confirm('Réinitialiser toute la configuration ?')) {
+        localStorage.removeItem('design-system-light');
+        location.reload();
+      }
+    });
+
+    // Toast
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      if (isError) toast.style.background = 'var(--error)';
+      else toast.style.background = 'var(--success)';
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Load on start
+    loadConfig();
+  </script>
+</body>
+</html>

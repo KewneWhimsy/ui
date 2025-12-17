@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Advanced Button - Original</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    @property --glass-angle-1 {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: -75deg;
+    }
+
+    @property --glass-angle-2 {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: -45deg;
+    }
+
+    :root {
+      --glass-reflection-r: 180;
+      --glass-reflection-g: 240;
+      --glass-reflection-b: 230;
+      --glass-reflection-opacity: 0.15;
+      --glass-shadow-blur: 2px;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 { font-size: 1.75rem; margin-bottom: 0.5rem; color: #1f2937; }
+    .subtitle { color: #6b7280; margin-bottom: 2rem; font-size: 0.875rem; }
+
+    .demo-area {
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .controls { display: grid; gap: 1.5rem; margin-top: 2rem; }
+    .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    
+    .control-group label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .color-input-wrapper { display: flex; gap: 0.75rem; align-items: center; }
+    
+    input[type="color"] {
+      width: 60px;
+      height: 40px;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      font-size: 0.875rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .range-value { font-weight: 600; color: #667eea; font-family: monospace; }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.875rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    /* ========== GLASS ADVANCED BUTTON (CODE ORIGINAL) ========== */
+    .glass-button-wrap {
+      position: relative;
+      z-index: 2;
+      border-radius: 999vw;
+      background: transparent;
+      pointer-events: none;
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .glass-button-shadow {
+      --shadow-cuttoff-fix: 2em;
+      position: absolute;
+      width: calc(100% + var(--shadow-cuttoff-fix));
+      height: calc(100% + var(--shadow-cuttoff-fix));
+      top: calc(0% - var(--shadow-cuttoff-fix) / 2);
+      left: calc(0% - var(--shadow-cuttoff-fix) / 2);
+      filter: blur(var(--glass-shadow-blur));
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .glass-button-shadow::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      border-radius: 999vw;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+      width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+      height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+      top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+      left: calc(var(--shadow-cuttoff-fix) - 0.875em);
+      padding: 0.125em;
+      box-sizing: border-box;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+      overflow: visible;
+      opacity: 1;
+    }
+
+    .glass-button {
+      --border-width: clamp(1px, 0.0625em, 4px);
+      all: unset;
+      cursor: pointer;
+      position: relative;
+      pointer-events: auto;
+      z-index: 3;
+      background: linear-gradient(-75deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+      border-radius: 999vw;
+      box-shadow: 
+        inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
+        inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
+        0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.2),
+        0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2),
+        0 0 0 0 rgba(255, 255, 255, 1);
+      backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+      -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .glass-button:hover {
+      transform: scale(0.975);
+      backdrop-filter: blur(0.01em);
+      -webkit-backdrop-filter: blur(0.01em);
+      box-shadow: 
+        inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
+        inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
+        0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25),
+        0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.5),
+        0 0 0 0 rgba(255, 255, 255, 1);
+    }
+
+    .glass-button span {
+      position: relative;
+      display: block;
+      user-select: none;
+      font-family: "Inter", sans-serif;
+      letter-spacing: -0.05em;
+      font-weight: 500;
+      font-size: 1em;
+      color: rgba(50, 50, 50, 1);
+      -webkit-font-smoothing: antialiased;
+      text-shadow: 0 0.25em 0.05em rgba(0, 0, 0, 0.1);
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+      padding-inline: 1.5em;
+      padding-block: 0.875em;
+    }
+
+    .glass-button:hover span {
+      text-shadow: 0.025em 0.025em 0.025em rgba(0, 0, 0, 0.12);
+    }
+
+    .glass-button span::after {
+      content: "";
+      display: block;
+      position: absolute;
+      z-index: 1;
+      width: calc(100% - var(--border-width));
+      height: calc(100% - var(--border-width));
+      top: calc(0% + var(--border-width) / 2);
+      left: calc(0% + var(--border-width) / 2);
+      box-sizing: border-box;
+      border-radius: 999vw;
+      overflow: hidden;
+      background: linear-gradient(
+        var(--glass-angle-2), 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(255, 255, 255, 0.5) 40% 50%, 
+        rgba(255, 255, 255, 0) 55%
+      );
+      z-index: 3;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      background-size: 200% 200%;
+      background-position: 0% 50%;
+      background-repeat: no-repeat;
+      transition: background-position 500ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-2 500ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .glass-button:hover span::after {
+      background-position: 25% 50%;
+    }
+
+    .glass-button:active span::after {
+      background-position: 50% 15%;
+      --glass-angle-2: -15deg;
+    }
+
+    .glass-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        135deg, 
+        rgba(var(--glass-reflection-r), var(--glass-reflection-g), var(--glass-reflection-b), var(--glass-reflection-opacity)), 
+        transparent
+      );
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+
+    .glass-button::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      border-radius: 999vw;
+      width: calc(100% + var(--border-width));
+      height: calc(100% + var(--border-width));
+      top: calc(0% - var(--border-width) / 2);
+      left: calc(0% - var(--border-width) / 2);
+      padding: var(--border-width);
+      box-sizing: border-box;
+      background: 
+        conic-gradient(
+          from var(--glass-angle-1) at 50% 50%, 
+          rgba(0, 0, 0, 0.5), 
+          rgba(0, 0, 0, 0) 5% 40%, 
+          rgba(0, 0, 0, 0.5) 50%, 
+          rgba(0, 0, 0, 0) 60% 95%, 
+          rgba(0, 0, 0, 0.5)
+        ),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1), --glass-angle-1 500ms ease;
+      box-shadow: inset 0 0 0 calc(var(--border-width)/2) rgba(255, 255, 255, 0.5);
+    }
+
+    .glass-button:hover::after {
+      --glass-angle-1: -125deg;
+    }
+
+    .glass-button:active::after {
+      --glass-angle-1: -75deg;
+    }
+
+    /* Shadow Hover Effects */
+    .glass-button-wrap:has(.glass-button:hover) .glass-button-shadow {
+      filter: blur(clamp(2px, 0.0625em, 6px));
+    }
+
+    .glass-button-wrap:has(.glass-button:hover) .glass-button-shadow::after {
+      top: calc(var(--shadow-cuttoff-fix) - 0.875em);
+      opacity: 1;
+    }
+
+    .glass-button-wrap:has(.glass-button:active) .glass-button-shadow::after {
+      top: calc(var(--shadow-cuttoff-fix) - 0.5em);
+      opacity: 0.75;
+    }
+
+    code {
+      display: block;
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      margin-top: 1rem;
+      white-space: pre-wrap;
+    }
+
+    .info {
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✨ Glass Advanced Button</h1>
+    <p class="subtitle">Code original avec @property animations, shadow hover effects, conic-gradient borders</p>
+
+    <div class="demo-area">
+      <div class="glass-button-wrap">
+        <button class="glass-button">
+          <span>Glass Advanced</span>
+        </button>
+        <div class="glass-button-shadow"></div>
+      </div>
+    </div>
+
+    <div class="info">
+      💡 <strong>Features :</strong> Reflection RGB customisable, shadow blur dynamique, animations CSS @property, hover effects sur la shadow, backdrop-filter adaptatif, multiple box-shadows, conic-gradient pour les bordures...
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>Reflection Color (RGB)</label>
+        <div class="color-input-wrapper">
+          <input type="color" id="reflection-color" value="#B4F0E6">
+          <input type="text" id="reflection-color-text" value="#B4F0E6">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Reflection Opacity: <span class="range-value" id="opacity-value">0.15</span></label>
+        <input type="range" id="reflection-opacity" min="0" max="1" step="0.01" value="0.15">
+      </div>
+
+      <div class="control-group">
+        <label>Shadow Blur: <span class="range-value" id="blur-value">2px</span></label>
+        <input type="range" id="shadow-blur" min="1" max="12" step="0.5" value="2">
+      </div>
+
+      <button class="btn-action" id="copy-css">📋 Copier le CSS</button>
+      <button class="btn-action" id="copy-html">📄 Copier le HTML</button>
+    </div>
+
+    <code>&lt;div class="glass-button-wrap"&gt;
+  &lt;button class="glass-button"&gt;
+    &lt;span&gt;Your Text&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;div class="glass-button-shadow"&gt;&lt;/div&gt;
+&lt;/div&gt;</code>
+  </div>
+
+  <script>
+    function hexToRgb(hex) {
+      hex = hex.replace('#', '');
+      return {
+        r: parseInt(hex.substr(0, 2), 16),
+        g: parseInt(hex.substr(2, 2), 16),
+        b: parseInt(hex.substr(4, 2), 16)
+      };
+    }
+
+    const colorInput = document.getElementById('reflection-color');
+    const colorText = document.getElementById('reflection-color-text');
+    
+    function updateReflectionColor(value) {
+      const rgb = hexToRgb(value);
+      document.documentElement.style.setProperty('--glass-reflection-r', rgb.r);
+      document.documentElement.style.setProperty('--glass-reflection-g', rgb.g);
+      document.documentElement.style.setProperty('--glass-reflection-b', rgb.b);
+    }
+
+    colorInput.addEventListener('input', (e) => {
+      colorText.value = e.target.value;
+      updateReflectionColor(e.target.value);
+    });
+
+    colorText.addEventListener('input', (e) => {
+      if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+        colorInput.value = e.target.value;
+        updateReflectionColor(e.target.value);
+      }
+    });
+
+    document.getElementById('reflection-opacity').addEventListener('input', (e) => {
+      document.getElementById('opacity-value').textContent = e.target.value;
+      document.documentElement.style.setProperty('--glass-reflection-opacity', e.target.value);
+    });
+
+    document.getElementById('shadow-blur').addEventListener('input', (e) => {
+      document.getElementById('blur-value').textContent = e.target.value + 'px';
+      document.documentElement.style.setProperty('--glass-shadow-blur', e.target.value + 'px');
+    });
+
+    document.getElementById('copy-css').addEventListener('click', async () => {
+      const style = document.querySelector('style').textContent;
+      try {
+        await navigator.clipboard.writeText(style);
+        alert('CSS copié dans le presse-papiers !');
+      } catch(e) {
+        alert('Erreur - ouvre DevTools pour copier le CSS');
+      }
+    });
+    
+    document.getElementById('copy-html').addEventListener('click', async () => {
+      const html = document.querySelector('code').textContent;
+      try {
+        await navigator.clipboard.writeText(html);
+        alert('HTML copié dans le presse-papiers !');
+      } catch(e) {
+        alert('Erreur - regarde le code ci-dessus');
+      }
+    });
+  </script>
+</body>
+</html>
